@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f7fc">
+  <meta name="description" content="저축을 먼저 챙기고, 이번 달 생활비를 펭귄 빙하로 확인해요.">
+  <title>우리 집 빙하 · 생활비</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #f6f7fc;
+      --surface: #fff;
+      --ink: #181d35;
+      --muted: #59637b;
+      --line: #e4e7f1;
+      --accent: #4c49c8;
+      --accent-deep: #403bae;
+      --accent-subtle: #eeedff;
+      --danger: #a12b48;
+      --danger-bg: #fff0f3;
+      --warning: #8a480d;
+      --warning-bg: #fff3e6;
+      --green: #236559;
+      --green-bg: #e9f7f2;
+      font-family: Inter, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+      font-synthesis: none;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; color: var(--ink); background: var(--background); -webkit-font-smoothing: antialiased; }
+    button, input { font: inherit; }
+    button { cursor: pointer; touch-action: manipulation; }
+    :focus-visible { outline: 3px solid #6d67e3; outline-offset: 3px; }
+    h1, h2, p, dl, dd { margin: 0; }
+    svg { display: block; flex-shrink: 0; }
+    .wrap { width: min(1120px, calc(100% - 64px)); margin-inline: auto; }
+    .topbar { border-bottom: 1px solid var(--line); background: var(--surface); }
+    .topbar-inner { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); font-weight: 800; font-size: 17px; letter-spacing: -.045em; white-space: nowrap; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: #eae9ff; color: var(--accent); }
+    .month { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 9px; color: #485471; font-size: 13px; font-weight: 700; white-space: nowrap; }
+    main.wrap { padding-block: 36px 30px; }
+    .heading { margin-bottom: 25px; }
+    h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -.065em; line-height: 1.16; }
+    .heading p { margin-top: 10px; font-size: 15px; color: var(--muted); line-height: 1.6; letter-spacing: -.025em; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(310px, 365px); gap: 22px; align-items: start; }
+    .card { min-width: 0; border: 1px solid var(--line); border-radius: 23px; background: var(--surface); box-shadow: 0 6px 20px #252c6710; }
+    .overview { overflow: hidden; scroll-margin-top: 12px; }
+    .scene { position: relative; isolation: isolate; height: clamp(340px, 37vw, 412px); background: #152149; color: white; overflow: hidden; scroll-margin-top: 12px; }
+    .scene canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .scene::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(120deg, #0a12384d, transparent 55%); pointer-events: none; }
+    .scene-head { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 26px; }
+    .balance-label { color: #dbe1ff; font-size: 14px; font-weight: 650; line-height: 1.35; letter-spacing: -.02em; }
+    .balance { display: block; margin-top: 6px; line-height: 1.05; font-size: clamp(26px, 4.2vw, 44px); font-weight: 800; letter-spacing: -.058em; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+    .balance .unit { margin-left: 5px; font-size: .5em; letter-spacing: 0; vertical-align: .1em; }
+    .scene[data-level="empty"] .balance { color: #ffdce6; }
+    .ice-chip { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 8px 11px; border: 1px solid #d4dfff48; border-radius: 100px; background: #151f4bcc; color: #e9edff; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .ice-chip svg { color: #a4ddff; }
+    .scene[data-level="low"] .ice-chip { border-color: #ffc88680; color: #ffe2bb; }
+    .scene[data-level="low"] .ice-chip svg { color: #ffd294; }
+    .scene[data-level="empty"] .ice-chip { border-color: #ffa8be80; color: #ffd9e3; }
+    .scene[data-level="empty"] .ice-chip svg { color: #ffb7cb; }
+    .penguin-caption { position: absolute; z-index: 1; left: 0; right: 0; bottom: 10px; padding-inline: 10px; text-align: center; pointer-events: none; }
+    .penguin-caption span { display: inline-block; padding: 6px 10px; border-radius: 10px; background: #151f4be8; color: #fff; font-size: 12px; font-weight: 700; }
+    .summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 20px 7px; }
+    .summary > div { min-width: 0; padding-inline: 17px; }
+    .summary > div + div { border-left: 1px solid var(--line); }
+    .summary dt { margin-bottom: 7px; color: var(--muted); font-size: 12px; line-height: 1.3; letter-spacing: -.035em; }
+    .summary dd { font-weight: 800; font-size: clamp(14px, 2vw, 18px); line-height: 1.25; letter-spacing: -.045em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .summary dd .unit { margin-left: 3px; font-size: .8em; font-weight: 650; }
+    .overview-note { border-top: 1px solid var(--line); padding: 13px 24px; display: flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.45; color: var(--muted); letter-spacing: -.025em; }
+    .overview-note[data-level="low"] { background: var(--warning-bg); color: var(--warning); }
+    .overview-note[data-level="empty"] { background: var(--danger-bg); color: var(--danger); }
+    .flow-card { padding: 24px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 5px 12px; }
+    h2 { font-size: 22px; line-height: 1.25; font-weight: 800; letter-spacing: -.055em; }
+    .panel-desc { margin: 8px 0 19px; color: var(--muted); font-size: 13px; line-height: 1.55; letter-spacing: -.025em; }
+    .field { display: block; margin-bottom: 13px; }
+    .field-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 750; letter-spacing: -.03em; }
+    .field-box { position: relative; display: flex; }
+    .currency-input {
+      appearance: none; display: block; width: 100%; min-width: 0; height: 48px; padding: 0 37px 0 13px;
+      border: 1px solid #dce0ec; border-radius: 11px; color: var(--ink); background: #fcfcff;
+      font-size: 16px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums;
+    }
+    .currency-input::placeholder { color: #717b92; font-weight: 550; opacity: 1; }
+    .currency-input:focus { border-color: #6d67e3; outline: 3px solid #ebe9ff; outline-offset: 0; background: #fff; }
+    .currency-input[aria-invalid="true"] { border-color: #c85370; }
+    .currency-unit { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 650; font-size: 13px; pointer-events: none; }
+    .calculation { min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 11px; padding: 10px 12px; border-radius: 10px; background: var(--accent-subtle); color: var(--accent-deep); font-size: 13px; font-weight: 750; letter-spacing: -.02em; }
+    .calculation strong { text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .calculation[data-level="empty"] { color: var(--danger); background: var(--danger-bg); }
+    .btn-primary { width: 100%; display: flex; justify-content: center; align-items: center; gap: 9px; min-height: 48px; padding: 10px 13px; border: 1px solid transparent; border-radius: 11px; color: #fff; background: var(--accent); font-size: 15px; font-weight: 750; letter-spacing: -.03em; transition: background .16s ease, transform .16s ease; }
+    .btn-primary:hover { background: var(--accent-deep); }
+    .btn-primary:active { transform: translateY(1px); }
+    .btn-primary:disabled { cursor: default; background: #e8e9f4; color: #586178; transform: none; }
+    .text-button { min-height: 34px; padding: 4px 0; border: 0; border-radius: 5px; background: none; color: var(--accent-deep); font-size: 13px; font-weight: 750; letter-spacing: -.025em; }
+    .text-button:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .sample-button { display: block; margin: 5px auto -6px; }
+    .edit-button { margin-top: -4px; }
+    .setup-actions { display: flex; gap: 8px; }
+    .cancel-button { flex-shrink: 0; min-width: 63px; padding-inline: 12px; background: #f0f1f8; }
+    .error { color: var(--danger); margin-bottom: 10px; font-size: 13px; font-weight: 650; line-height: 1.45; }
+    .segmented { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 16px; padding: 4px; border-radius: 12px; background: #f0f1f8; }
+    .segment { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; border: 1px solid transparent; border-radius: 9px; color: var(--muted); background: transparent; font-size: 14px; font-weight: 800; letter-spacing: -.025em; }
+    .segment:hover { color: var(--accent-deep); }
+    .segment[aria-pressed="true"] { color: var(--accent-deep); background: var(--surface); border-color: #e6e5f7; box-shadow: 0 1px 3px #11194b14; }
+    .preview { display: grid; gap: 6px; padding: 13px 12px; margin-bottom: 12px; min-height: 74px; border-radius: 11px; color: var(--accent-deep); background: var(--accent-subtle); font-size: 13px; line-height: 1.4; letter-spacing: -.025em; }
+    .preview[data-level="low"] { color: var(--warning); background: var(--warning-bg); }
+    .preview[data-level="empty"] { color: var(--danger); background: var(--danger-bg); }
+    .preview-line { display: flex; justify-content: space-between; align-items: baseline; gap: 7px; }
+    .preview-line strong { text-align: right; font-variant-numeric: tabular-nums; font-size: 16px; letter-spacing: -.04em; overflow-wrap: anywhere; }
+    .preview-caption { font-size: 12px; font-weight: 650; }
+    .daily-budget { display: grid; gap: 5px; padding-top: 8px; margin-top: 2px; border-top: 1px solid currentColor; }
+    .over-budget { display: grid; gap: 9px; padding: 12px; border: 1px solid #f1c7d2; border-radius: 11px; background: var(--danger-bg); color: var(--danger); }
+    .over-budget p { font-size: 13px; font-weight: 700; line-height: 1.45; }
+    .over-budget-actions { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+    .over-budget-actions button { flex: 1 1 105px; min-height: 44px; }
+    .over-budget-actions .btn-primary { background: var(--danger); }
+    .over-budget-actions .text-button { color: var(--danger); }
+    .last-action { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; padding-inline: 10px; border-radius: 9px; background: var(--green-bg); color: var(--green); }
+    .last-action p { padding-block: 9px; font-size: 12px; font-weight: 700; line-height: 1.4; }
+    .last-action button { flex-shrink: 0; color: inherit; }
+    .records { margin-top: 21px; padding: 21px 24px 7px; }
+    .records-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .records h2 { font-size: 19px; }
+    .record-count { font-size: 13px; color: var(--muted); font-weight: 700; }
+    .record-empty { padding: 18px 0; font-size: 14px; color: var(--muted); }
+    .record-list { list-style: none; padding: 0; margin: 8px 0 0; }
+    .record { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, auto) auto; align-items: center; gap: 10px; min-height: 62px; padding-block: 10px; border-top: 1px solid var(--line); }
+    .record-icon { display: grid; place-items: center; width: 33px; height: 33px; border-radius: 9px; background: var(--accent-subtle); color: var(--accent-deep); }
+    .record-icon[data-type="deposit"] { background: var(--green-bg); color: var(--green); }
+    .record-kind { display: block; font-size: 14px; font-weight: 800; }
+    .record-date { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .record-amount { font-size: 14px; font-weight: 800; text-align: right; overflow-wrap: anywhere; }
+    .record-amount[data-type="deposit"] { color: var(--green); }
+    .result { width: min(360px, calc(100% - 36px)); padding: 22px; color: var(--ink); }
+    .result::backdrop { background: #10183c99; }
+    .result p { margin-block: 10px 18px; color: var(--danger); font-weight: 700; }
+    .storage-status { margin-top: 14px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: right; letter-spacing: -.02em; }
+    .storage-status[data-error="true"] { color: var(--danger); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+    @media (max-width: 870px) {
+      .wrap { width: min(1120px, calc(100% - 42px)); }
+      .grid { gap: 15px; grid-template-columns: minmax(0, 1fr) minmax(292px, 330px); }
+      .scene-head { padding: 20px; }
+      .flow-card { padding: 19px; }
+      .summary > div { padding-inline: 10px; }
+    }
+    @media (max-width: 700px) {
+      .wrap { width: min(520px, calc(100% - 32px)); }
+      .topbar-inner { min-height: 58px; }
+      .brand { font-size: 16px; gap: 8px; }
+      .brand-mark { width: 33px; height: 33px; border-radius: 10px; }
+      .month { padding: 6px 8px; font-size: 12px; }
+      main.wrap { padding-block: 24px calc(23px + env(safe-area-inset-bottom)); }
+      .heading { margin-bottom: 16px; }
+      .heading p { margin-top: 7px; font-size: 13px; }
+      .grid { grid-template-columns: 1fr; gap: 13px; }
+      .card { border-radius: 18px; }
+      .scene { height: clamp(218px, 63vw, 314px); }
+      .scene-head { padding: 15px; }
+      .balance-label { font-size: 12px; }
+      .balance { margin-top: 5px; font-size: clamp(25px, 7.3vw, 38px); }
+      .ice-chip { padding: 6px 7px; font-size: 10px; gap: 4px; }
+      .ice-chip svg { width: 13px; height: 13px; }
+      .summary { padding-block: 14px; }
+      .summary dt { margin-bottom: 5px; font-size: 11px; }
+      .overview-note { padding: 10px 15px; font-size: 12px; }
+      .flow-card { padding: 17px; }
+      h2 { font-size: 20px; }
+      .panel-desc { margin-bottom: 14px; }
+      .records { margin-top: 13px; padding: 16px 17px 5px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0s !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="sr-only" aria-hidden="true" focusable="false">
+    <symbol id="icon-ice" viewBox="0 0 24 24"><path d="m3 15 6-10 4 4 3-3 5 9-3 4H6Z" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15h18M9 5l1 10 3 4m3-13-2 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".75"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 4v4m8-4v4M4 11h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="icon-right" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M5 12h14m-7-7v14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+    <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5m0-8h.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <span class="brand">
+        <span class="brand-mark"><svg width="23" height="23" aria-hidden="true"><use href="#icon-ice"/></svg></span>
+        우리 집 빙하
+      </span>
+      <time class="month" id="month">
+        <svg width="16" height="16" aria-hidden="true"><use href="#icon-calendar"/></svg>
+        <span id="month-label">이번 달</span>
+      </time>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <header class="heading">
+      <h1>이번 달 내 생활비</h1>
+      <p>저축을 먼저 챙기고, 이번 달에 쓸 수 있는 금액을 확인해요.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card overview" id="overview" aria-label="생활비 현황">
+        <div class="scene" id="scene" data-level="setup">
+          <canvas id="ice-scene" aria-hidden="true"></canvas>
+          <div class="scene-head">
+            <div>
+              <p class="balance-label">남은 생활비</p>
+              <strong class="balance" id="balance" tabindex="-1">설정 전</strong>
+            </div>
+            <span class="ice-chip">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-ice"/></svg>
+              <span id="ice-percent">빙하 미리보기</span>
+            </span>
+          </div>
+          <p class="penguin-caption"><span id="penguin-caption">이번 달은 여기서 시작해요!</span></p>
+        </div>
+        <dl class="summary">
+          <div><dt>생활비 예산</dt><dd id="total-budget">—</dd></div>
+          <div><dt>기록한 지출</dt><dd id="total-spent">—</dd></div>
+          <div><dt>추가 입금</dt><dd id="total-deposits">—</dd></div>
+        </dl>
+        <div class="overview-note" id="overview-note" data-level="setup">
+          <svg width="16" height="16" aria-hidden="true"><use href="#icon-info"/></svg>
+          <p id="overview-message">월수입에서 고정비와 저축 목표를 빼면 생활비 예산이 돼요.</p>
+        </div>
+      </section>
+
+      <section class="card flow-card" id="setup-panel" aria-labelledby="setup-title">
+        <h2 id="setup-title" tabindex="-1">생활비 기준 정하기</h2>
+        <p class="panel-desc">이번 달 내 실수령액을 기준으로 잡아요.</p>
+        <form id="setup-form" novalidate>
+          <label class="field" for="income">
+            <span class="field-label">월수입</span>
+            <span class="field-box"><input class="currency-input" id="income" name="income" inputmode="numeric" autocomplete="off" placeholder="예: 4,500,000" required aria-describedby="setup-error"><span class="currency-unit" aria-hidden="true">원</span></span>
+          </label>
+          <label class="field" for="fixed">
+            <span class="field-label">고정비</span>
+            <span class="field-box"><input class="currency-input" id="fixed" name="fixed" inputmode="numeric" autocomplete="off" placeholder="예: 2,500,000" required aria-describedby="setup-error"><span class="currency-unit" aria-hidden="true">원</span></span>
+          </label>
+          <label class="field" for="savings">
+            <span class="field-label">저축 목표</span>
+            <span class="field-box"><input class="currency-input" id="savings" name="savings" inputmode="numeric" autocomplete="off" placeholder="예: 1,000,000" required aria-describedby="setup-error"><span class="currency-unit" aria-hidden="true">원</span></span>
+          </label>
+          <div class="calculation" id="calculation">
+            <span>기본 생활비 예산</span><strong id="base-budget">—</strong>
+          </div>
+          <p id="setup-error" class="error" role="alert" hidden></p>
+          <div class="setup-actions">
+            <button class="text-button cancel-button" id="cancel-setup" type="button" hidden>취소</button>
+            <button class="btn-primary" id="save-budget" type="submit">
+              <span id="save-budget-label">생활비 예산 설정</span>
+              <svg width="17" height="17" aria-hidden="true"><use href="#icon-right"/></svg>
+            </button>
+          </div>
+          <button class="text-button sample-button" id="fill-sample" type="button">예시 금액 채우기</button>
+        </form>
+      </section>
+
+      <section class="card flow-card" id="entry-panel" aria-labelledby="entry-title" hidden>
+        <div class="panel-header">
+          <h2 id="entry-title" tabindex="-1">금액 기록</h2>
+          <button class="text-button edit-button" id="edit-budget" type="button">기준 수정</button>
+        </div>
+        <p class="panel-desc" id="entry-description">금액을 입력하면 저장 후 잔액을 미리 볼 수 있어요.</p>
+        <div class="segmented" id="entry-types" role="group" aria-label="기록 유형">
+          <button class="segment" type="button" data-type="expense" aria-pressed="true">
+            <svg width="16" height="16" aria-hidden="true"><use href="#icon-minus"/></svg> 지출
+          </button>
+          <button class="segment" type="button" data-type="deposit" aria-pressed="false">
+            <svg width="16" height="16" aria-hidden="true"><use href="#icon-plus"/></svg> 입금
+          </button>
+        </div>
+        <form id="entry-form" novalidate>
+          <label class="field" for="amount">
+            <span class="field-label" id="amount-label">지출 금액</span>
+            <span class="field-box"><input class="currency-input" id="amount" name="amount" inputmode="numeric" autocomplete="off" placeholder="금액 입력" required aria-describedby="entry-error"><span class="currency-unit" aria-hidden="true">원</span></span>
+          </label>
+          <p id="entry-error" class="error" aria-live="polite" hidden></p>
+          <div class="preview" id="preview" aria-live="polite" aria-atomic="true" hidden>
+            <div class="preview-line"><span>저장 후 남은 생활비</span><strong id="preview-balance"></strong></div>
+            <p class="preview-caption" id="preview-caption"></p>
+            <div class="daily-budget">
+              <p class="preview-caption" id="days-left"></p>
+              <div class="preview-line"><span>하루에 쓸 수 있는 금액</span><strong id="daily-change"></strong></div>
+            </div>
+          </div>
+          <button class="btn-primary" id="save-entry" type="submit" disabled>지출 저장</button>
+          <div class="over-budget" id="over-budget" hidden>
+            <p id="over-budget-message" role="alert"></p>
+            <div class="over-budget-actions">
+              <button class="text-button" id="revise-expense" type="button">금액 다시 보기</button>
+              <button class="btn-primary" id="confirm-expense" type="button">초과 지출 저장</button>
+            </div>
+          </div>
+        </form>
+        <div class="last-action" id="last-action" hidden>
+          <p id="last-action-text" role="status"></p>
+          <button class="text-button" id="undo-entry" type="button">되돌리기</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="card records" id="records" aria-labelledby="records-title" hidden>
+      <div class="records-header">
+        <h2 id="records-title">이번 달 기록</h2>
+        <span class="record-count" id="record-count">0건</span>
+      </div>
+      <p class="record-empty" id="record-empty">저장한 지출이나 입금이 여기에 표시돼요.</p>
+      <ul class="record-list" id="record-list"></ul>
+    </section>
+    <p class="storage-status" id="storage-message" role="status" hidden></p>
+    <p class="sr-only" id="announcement" role="status" aria-atomic="true"></p>
+    <noscript><p class="overview-note">이 앱을 사용하려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
+  </main>
+
+  <dialog class="card result" id="budget-result" aria-labelledby="result-title">
+    <h2 id="result-title"></h2>
+    <p id="result-amount"></p>
+    <form method="dialog" class="setup-actions">
+      <button class="btn-primary" id="show-amounts" value="amounts">금액 보기</button>
+      <button class="text-button cancel-button" value="close">닫기</button>
+    </form>
+  </dialog>
+
+  <template id="record-template">
+    <li class="record">
+      <span class="record-icon"><svg width="16" height="16" aria-hidden="true"><use/></svg></span>
+      <span><span class="record-kind"></span><time class="record-date"></time></span>
+      <strong class="record-amount"></strong>
+      <button class="text-button record-delete" type="button">삭제</button>
+    </li>
+  </template>
+
+  <script>
+    "use strict";
+
+    const byId = (id) => document.getElementById(id);
+    const numberFormat = new Intl.NumberFormat("ko-KR");
+    const ratioFormat = new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 1 });
+    const monthFormat = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" });
+    const recordDateFormat = new Intl.DateTimeFormat("ko-KR", {
+      month: "long", day: "numeric", hour: "numeric", minute: "numeric"
+    });
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const maximumAmount = 999_999_999_999;
+    const stages = [
+      { limit: 0.30, name: "안정", line: "아직 미끄럼 탈 자리가 넉넉해요!" },
+      { limit: 0.50, name: "금이 감", line: "어? 발밑에서 쩍 소리가 났어요." },
+      { limit: 0.70, name: "주의", line: "앗, 빙하 한 조각이 떨어졌어요!" },
+      { limit: 0.90, name: "경고", line: "왼쪽에 바다표범이 나타났어요!" },
+      { limit: 1, name: "위기", line: "오른쪽엔 범고래까지!" },
+      { limit: Infinity, name: "붕괴", line: "풍덩! 으악, 도망가자!" }
+    ];
+    const typeNames = { expense: "지출", deposit: "입금" };
+    const currentDate = new Date();
+    const monthKey = currentDate.getFullYear() + "-" + String(currentDate.getMonth() + 1).padStart(2, "0");
+    const storageKey = "our-glacier:v1:" + monthKey;
+    const budgetInputs = ["income", "fixed", "savings"].map(byId);
+    const amountInput = byId("amount");
+    const typeButtons = Array.from(document.querySelectorAll(".segment"));
+    let storageAvailable = true;
+    let state = loadState();
+    let entryType = "expense";
+    let lastEntry = null;
+
+    function parseAmount(value) {
+      const digits = value.trim().replace(/[,\s]/g, "");
+      if (!/^\d+$/.test(digits)) return null;
+      const amount = Number(digits);
+      return Number.isSafeInteger(amount) && amount <= maximumAmount ? amount : null;
+    }
+
+    function formatAmount(amount) {
+      return (amount < 0 ? "−" : "") + numberFormat.format(Math.abs(amount));
+    }
+
+    function won(amount) {
+      return formatAmount(amount) + "원";
+    }
+
+    function percentage(ratio) {
+      if (ratio > 0 && ratio < 0.001) return "0.1% 미만";
+      if (ratio >= 0.9995 && ratio < 1) return "100% 미만";
+      return ratioFormat.format(ratio * 100) + "%";
+    }
+
+    function setMoney(element, amount) {
+      const unit = document.createElement("span");
+      unit.className = "unit";
+      unit.textContent = "원";
+      element.replaceChildren(formatAmount(amount), unit);
+    }
+
+    function budgetBase(budget) {
+      return budget.income - budget.fixed - budget.savings;
+    }
+
+    function isStoredAmount(amount) {
+      return Number.isSafeInteger(amount) && amount >= 0 && amount <= maximumAmount;
+    }
+
+    function loadState() {
+      let raw;
+      try {
+        raw = localStorage.getItem(storageKey);
+        storageAvailable = true;
+      } catch {
+        storageAvailable = false;
+        return { budget: null, entries: [] };
+      }
+
+      try {
+        const saved = JSON.parse(raw);
+        const budget = saved?.budget;
+        if (!budget || ![budget.income, budget.fixed, budget.savings].every(isStoredAmount) || budgetBase(budget) <= 0) {
+          return { budget: null, entries: [] };
+        }
+        const entries = Array.isArray(saved.entries) ? saved.entries.filter((entry) =>
+          typeof entry?.id === "string" && Object.hasOwn(typeNames, entry.type) &&
+          isStoredAmount(entry.amount) && entry.amount > 0 && Number.isFinite(Date.parse(entry.time))
+        ) : [];
+        return { budget, entries };
+      } catch {
+        return { budget: null, entries: [] };
+      }
+    }
+
+    function persist(nextState) {
+      state = nextState;
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(state));
+        storageAvailable = true;
+      } catch {
+        storageAvailable = false;
+      }
+      renderStorageStatus();
+    }
+
+    function computeTotals(budget, entries, draft) {
+      let spent = 0;
+      let deposits = 0;
+      for (const entry of entries) {
+        if (entry.type === "expense") spent += entry.amount;
+        else deposits += entry.amount;
+      }
+      if (draft?.type === "expense") spent += draft.amount;
+      if (draft?.type === "deposit") deposits += draft.amount;
+
+      const total = budgetBase(budget) + deposits;
+      const remaining = total - spent;
+      const ratio = Math.max(0, Math.min(1, remaining / total));
+      const used = spent / total;
+      const stage = stages.findIndex(({ limit }) => used < limit);
+      const level = stage === 5 ? "empty" : stage >= 3 ? "low" : "safe";
+      return { total, spent, deposits, remaining, ratio, used, stage, level };
+    }
+
+    function budgetNotice(totals) {
+      if (totals.remaining < 0) return "생활비 예산을 " + won(-totals.remaining) + " 초과했어요.";
+      if (totals.remaining === 0) return "이번 달 생활비를 모두 썼어요.";
+      if (totals.level === "low") return "남은 생활비와 월말까지 남은 날짜를 확인해 보세요.";
+      return "";
+    }
+
+    function daysUntilMonthEnd(today = new Date()) {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const end = Date.UTC(year, month + 1, 1);
+      const startOfToday = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+      return Math.max(1, (end - startOfToday) / 86_400_000);
+    }
+
+    function renderOverview(animate = false, motion = null) {
+      if (!state.budget) return;
+      const totals = computeTotals(state.budget, state.entries);
+      byId("scene").dataset.level = totals.level;
+      setMoney(byId("balance"), totals.remaining);
+      setMoney(byId("total-budget"), totals.total);
+      setMoney(byId("total-spent"), totals.spent);
+      setMoney(byId("total-deposits"), totals.deposits);
+      const stage = stages[totals.stage];
+      byId("ice-percent").textContent = stage.name + " · " + percentage(totals.used) + " 사용";
+      byId("penguin-caption").textContent = totals.spent === 0 ? "이번 달은 여기서 시작해요!" : stage.line;
+
+      const notice = budgetNotice(totals);
+      byId("overview-note").hidden = !notice;
+      byId("overview-note").dataset.level = totals.level;
+      byId("overview-message").textContent = notice;
+      glacier.setRatio(totals.ratio, animate, motion, totals.stage, motion === "collapse" ? showBudgetResult : null);
+    }
+
+    function showBudgetResult() {
+      const { remaining } = computeTotals(state.budget, state.entries);
+      const result = byId("budget-result");
+      if (remaining > 0 || result.open) return;
+      byId("result-title").textContent = remaining === 0
+        ? "이번 달 생활비를 다 썼어요" : "이번 달 생활비 예산을 넘었어요";
+      byId("result-amount").textContent = remaining === 0
+        ? "남은 생활비 0원" : won(-remaining) + " 초과";
+      result.showModal();
+    }
+
+    function renderRecords() {
+      byId("records").hidden = !state.budget;
+      if (!state.budget) return;
+
+      const records = document.createDocumentFragment();
+      for (const entry of state.entries.slice().reverse()) {
+        const row = byId("record-template").content.cloneNode(true);
+        const isDeposit = entry.type === "deposit";
+        row.querySelector(".record-icon").dataset.type = entry.type;
+        row.querySelector("use").setAttribute("href", isDeposit ? "#icon-plus" : "#icon-minus");
+        row.querySelector(".record-kind").textContent = typeNames[entry.type];
+        const time = row.querySelector("time");
+        time.dateTime = entry.time;
+        time.textContent = recordDateFormat.format(new Date(entry.time));
+        const amount = row.querySelector(".record-amount");
+        amount.dataset.type = entry.type;
+        amount.textContent = (isDeposit ? "+" : "−") + won(entry.amount);
+        const remove = row.querySelector(".record-delete");
+        remove.setAttribute("aria-label", typeNames[entry.type] + " " + won(entry.amount) + " 기록 삭제");
+        remove.addEventListener("click", () => removeEntry(entry));
+        records.append(row);
+      }
+      byId("record-list").replaceChildren(records);
+      byId("record-count").textContent = numberFormat.format(state.entries.length) + "건";
+      byId("record-empty").hidden = state.entries.length > 0;
+    }
+
+    function renderStorageStatus() {
+      const message = byId("storage-message");
+      message.hidden = !state.budget && storageAvailable;
+      message.dataset.error = String(!storageAvailable);
+      message.textContent = storageAvailable
+        ? "기록은 이 브라우저에 저장돼요."
+        : "브라우저 저장이 제한되어 있어요. 화면을 닫거나 새로고침하면 기록이 사라질 수 있어요.";
+    }
+
+    function budgetDraft() {
+      const [income, fixed, savings] = budgetInputs.map((field) => parseAmount(field.value));
+      return { income, fixed, savings };
+    }
+
+    function renderSetupEstimate() {
+      const draft = budgetDraft();
+      const ready = Object.values(draft).every((amount) => amount !== null);
+      const base = ready ? budgetBase(draft) : null;
+      byId("base-budget").textContent = base === null ? "—" : won(base);
+      byId("calculation").dataset.level = base !== null && base <= 0 ? "empty" : "safe";
+    }
+
+    function setupError(text = "", field = null) {
+      const error = byId("setup-error");
+      error.textContent = text;
+      error.hidden = !text;
+      budgetInputs.forEach((input) => input.removeAttribute("aria-invalid"));
+      if (field) field.setAttribute("aria-invalid", "true");
+    }
+
+    function showSetup() {
+      const editing = Boolean(state.budget);
+      byId("setup-panel").hidden = false;
+      byId("entry-panel").hidden = true;
+      byId("setup-title").textContent = editing ? "생활비 기준 수정" : "생활비 기준 정하기";
+      byId("save-budget-label").textContent = editing ? "수정한 기준 저장" : "생활비 예산 설정";
+      byId("fill-sample").hidden = editing;
+      byId("cancel-setup").hidden = !editing;
+
+      if (editing) {
+        for (const input of budgetInputs) input.value = formatAmount(state.budget[input.name]);
+      }
+      setupError();
+      renderSetupEstimate();
+    }
+
+    function showEntry(moveFocus = false) {
+      byId("setup-panel").hidden = true;
+      byId("entry-panel").hidden = false;
+      renderEntry();
+      if (moveFocus) byId("entry-title").focus({ preventScroll: true });
+    }
+
+    function renderEntry(showError = false) {
+      byId("over-budget").hidden = true;
+      byId("over-budget-message").textContent = "";
+      const draftAmount = parseAmount(amountInput.value);
+      const valid = draftAmount !== null && draftAmount > 0;
+      const error = byId("entry-error");
+      const invalid = (showError || amountInput.value.trim() !== "") && !valid;
+      error.hidden = !invalid;
+      error.textContent = invalid ? "1원 이상의 금액을 숫자로 입력해 주세요." : "";
+      if (invalid) amountInput.setAttribute("aria-invalid", "true");
+      else amountInput.removeAttribute("aria-invalid");
+
+      byId("save-entry").disabled = !valid;
+      byId("save-entry").hidden = false;
+      const preview = byId("preview");
+      preview.hidden = !valid;
+      if (!valid) return;
+
+      const before = computeTotals(state.budget, state.entries);
+      const totals = computeTotals(state.budget, state.entries, { type: entryType, amount: draftAmount });
+      preview.dataset.level = totals.level;
+      byId("preview-balance").textContent = won(totals.remaining);
+      const days = daysUntilMonthEnd();
+      const dailyBefore = Math.floor(Math.max(0, before.remaining) / days);
+      const dailyAfter = Math.floor(Math.max(0, totals.remaining) / days);
+      byId("days-left").textContent = "오늘 포함 월말까지 " + days + "일";
+      byId("daily-change").textContent = won(dailyBefore) + " → " + won(dailyAfter);
+
+      const iceLabel = "빙하 " + percentage(totals.ratio);
+      if (totals.remaining < 0) {
+        byId("preview-caption").textContent = won(-totals.remaining) + " 초과 예상 · " + iceLabel;
+      } else if (totals.remaining === 0) {
+        byId("preview-caption").textContent = "생활비 소진 예상 · " + iceLabel;
+      } else {
+        byId("preview-caption").textContent = "빙하 " + percentage(before.ratio) + " → " + percentage(totals.ratio) +
+          (totals.level === "low" ? " · " + stages[totals.stage].name + " 단계" : "");
+      }
+    }
+
+    function setEntryType(type) {
+      if (entryType === type) return;
+      entryType = type;
+      for (const button of typeButtons) button.setAttribute("aria-pressed", String(button.dataset.type === type));
+      byId("amount-label").textContent = typeNames[type] + " 금액";
+      byId("save-entry").textContent = typeNames[type] + " 저장";
+      byId("entry-description").textContent = type === "deposit"
+        ? "처음 잡은 월수입에 포함되지 않은 금액을 입력해 주세요."
+        : "금액을 입력하면 저장 후 잔액을 미리 볼 수 있어요.";
+      renderEntry();
+    }
+
+    function revealScene() {
+      const scene = byId("scene");
+      const bounds = scene.getBoundingClientRect();
+      if (bounds.top < 0 || bounds.bottom > window.innerHeight) {
+        scene.scrollIntoView({ block: "start", behavior: reducedMotion.matches ? "auto" : "smooth" });
+      }
+    }
+
+    function announceBalance(prefix) {
+      const totals = computeTotals(state.budget, state.entries);
+      byId("announcement").textContent = prefix + " 남은 생활비 " + won(totals.remaining) + ". " + budgetNotice(totals);
+    }
+
+    for (const input of [...budgetInputs, amountInput]) {
+      input.addEventListener("blur", () => {
+        const value = parseAmount(input.value);
+        if (value !== null) input.value = formatAmount(value);
+      });
+    }
+
+    for (const input of budgetInputs) {
+      input.addEventListener("input", () => {
+        setupError();
+        renderSetupEstimate();
+      });
+    }
+
+    byId("fill-sample").addEventListener("click", () => {
+      byId("income").value = "4,500,000";
+      byId("fixed").value = "2,500,000";
+      byId("savings").value = "1,000,000";
+      setupError();
+      renderSetupEstimate();
+      byId("save-budget").focus({ preventScroll: true });
+    });
+
+    byId("edit-budget").addEventListener("click", () => {
+      showSetup();
+      byId("setup-title").focus({ preventScroll: true });
+    });
+    byId("cancel-setup").addEventListener("click", () => showEntry(true));
+
+    byId("setup-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const budget = budgetDraft();
+      const invalid = budgetInputs.find((input) => budget[input.name] === null || (input.name === "income" && budget.income === 0));
+      if (invalid) {
+        const message = invalid.name === "income" ? "월수입을 1원 이상 입력해 주세요." : "고정비와 저축 목표는 0원부터 입력할 수 있어요.";
+        setupError(message, invalid);
+        invalid.focus();
+        return;
+      }
+      if (budgetBase(budget) <= 0) {
+        setupError("생활비 예산이 0원보다 커야 해요. 월수입, 고정비, 저축 목표를 조정해 주세요.");
+        return;
+      }
+      persist({ budget, entries: state.entries });
+      renderOverview(true);
+      renderRecords();
+      showEntry(true);
+      revealScene();
+      announceBalance("생활비 기준을 저장했어요.");
+    });
+
+    byId("entry-types").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-type]");
+      if (button) setEntryType(button.dataset.type);
+    });
+    amountInput.addEventListener("input", () => renderEntry());
+
+    function saveEntry(confirmed = false) {
+      if (!state.budget) return;
+      const amount = parseAmount(amountInput.value);
+      if (amount === null || amount <= 0) {
+        renderEntry(true);
+        amountInput.focus();
+        return;
+      }
+
+      let motion = entryType;
+      if (entryType === "expense") {
+        const { remaining } = computeTotals(state.budget, state.entries);
+        const after = remaining - amount;
+        if (after < 0 && !confirmed) {
+          byId("save-entry").hidden = true;
+          byId("over-budget").hidden = false;
+          byId("over-budget-message").textContent = "생활비 예산을 " + won(-after) + " 초과해요. 이 지출을 저장할까요?";
+          byId("revise-expense").focus();
+          return;
+        }
+        if (remaining > 0 && after <= 0) motion = "collapse";
+      }
+
+      const entry = {
+        id: globalThis.crypto?.randomUUID?.() ?? Date.now() + "-" + Math.random(),
+        type: entryType,
+        amount,
+        time: new Date().toISOString()
+      };
+      persist({ budget: state.budget, entries: [...state.entries, entry] });
+      lastEntry = entry;
+      amountInput.value = "";
+      renderEntry();
+      renderOverview(true, motion);
+      renderRecords();
+      byId("last-action").hidden = false;
+      byId("last-action-text").textContent = typeNames[entry.type] + " " + won(entry.amount) + " 저장 완료";
+      byId("entry-title").focus({ preventScroll: true });
+      revealScene();
+      announceBalance("");
+    }
+
+    byId("entry-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (byId("over-budget").hidden) saveEntry();
+    });
+    byId("revise-expense").addEventListener("click", () => {
+      renderEntry();
+      amountInput.focus();
+    });
+    byId("confirm-expense").addEventListener("click", () => {
+      if (!byId("over-budget").hidden && entryType === "expense") saveEntry(true);
+    });
+
+    function removeEntry(removed) {
+      persist({ budget: state.budget, entries: state.entries.filter((entry) => entry.id !== removed.id) });
+      if (lastEntry?.id === removed.id) {
+        lastEntry = null;
+        byId("last-action").hidden = true;
+      }
+      renderOverview(true, removed.type === "expense" ? "deposit" : "expense");
+      renderRecords();
+      if (!byId("entry-panel").hidden) renderEntry();
+      byId("balance").focus({ preventScroll: true });
+      revealScene();
+      announceBalance("기록을 삭제했어요.");
+    }
+
+    byId("undo-entry").addEventListener("click", () => {
+      if (lastEntry) removeEntry(lastEntry);
+    });
+    byId("show-amounts").addEventListener("click", () => {
+      byId("budget-result").close();
+      byId("balance").focus({ preventScroll: true });
+      revealScene();
+    });
+
+    window.addEventListener("storage", (event) => {
+      if (event.key !== storageKey || !storageAvailable) return;
+      const updated = loadState();
+      if (!updated.budget) return;
+      const firstSetup = !state.budget;
+      state = updated;
+      if (lastEntry && !state.entries.some((entry) => entry.id === lastEntry.id)) {
+        lastEntry = null;
+        byId("last-action").hidden = true;
+      }
+      renderOverview(true);
+      renderRecords();
+      if (firstSetup) showEntry();
+      else if (!byId("entry-panel").hidden) renderEntry();
+    });
+
+    // The painted island scales on both axes, so its area follows the remaining budget.
+    const glacier = createGlacier(byId("ice-scene"));
+    byId("month").dateTime = monthKey;
+    byId("month-label").textContent = monthFormat.format(currentDate);
+    renderStorageStatus();
+    if (state.budget) {
+      showEntry();
+      renderOverview();
+      renderRecords();
+    } else {
+      showSetup();
+    }
+
+    function createGlacier(canvas) {
+      const context = canvas.getContext("2d");
+      if (!context) return { setRatio(_next, _animate, _direction, _stage, onFinish) { onFinish?.(); } };
+
+      let width = 0;
+      let height = 0;
+      let ratio = 1;
+      let stage = 0;
+      let transition = null;
+      let frame = 0;
+      let seed = 1619;
+
+      function random() {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      }
+
+      const stars = Array.from({ length: 96 }, () => [random(), random(), random()]);
+      const ripples = Array.from({ length: 73 }, () => [random(), random(), random()]);
+      const particles = Array.from({ length: 26 }, () => [random(), random(), random()]);
+
+      function polygon(points, fill, stroke = null, linewidth = 1) {
+        context.beginPath();
+        context.moveTo(...points[0]);
+        for (const point of points.slice(1)) context.lineTo(...point);
+        context.closePath();
+        context.fillStyle = fill;
+        context.fill();
+        if (stroke) {
+          context.lineWidth = linewidth;
+          context.strokeStyle = stroke;
+          context.stroke();
+        }
+      }
+
+      function ellipse(x, y, radiusX, radiusY, fill, rotation = 0) {
+        context.beginPath();
+        context.ellipse(x, y, radiusX, radiusY, rotation, 0, Math.PI * 2);
+        context.fillStyle = fill;
+        context.fill();
+      }
+
+      function shape(path, fill, stroke = null, lineWidth = 1) {
+        const outline = new Path2D(path);
+        context.fillStyle = fill;
+        context.fill(outline);
+        if (stroke) {
+          context.strokeStyle = stroke;
+          context.lineWidth = lineWidth;
+          context.lineJoin = "round";
+          context.lineCap = "round";
+          context.stroke(outline);
+        }
+      }
+
+      function radial(x, y, radius, color, edge) {
+        const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, edge);
+        return gradient;
+      }
+
+      function linear(x1, y1, x2, y2, stops) {
+        const gradient = context.createLinearGradient(x1, y1, x2, y2);
+        for (const [at, color] of stops) gradient.addColorStop(at, color);
+        return gradient;
+      }
+
+      function paintSky(horizon) {
+        context.fillStyle = linear(0, 0, 0, horizon + 12, [
+          [0, "#10183c"], [.6, "#252e66"], [1, "#565e9d"]
+        ]);
+        context.fillRect(0, 0, width, horizon + 13);
+        context.fillStyle = radial(width * .76, horizon * .81, width * .47, "#a496f276", "#776dda00");
+        context.fillRect(0, 0, width, horizon + 13);
+
+        const light = linear(width * .24, horizon * .55, width, horizon * .15, [
+          [0, "#8282df00"], [.36, "#a993ed40"], [.68, "#67e6db73"], [1, "#79d8ff00"]
+        ]);
+        context.save();
+        context.translate(width * .23, horizon * .55);
+        for (let i = 0; i < 23; i++) {
+          const offset = i * horizon * .006;
+          context.beginPath();
+          context.moveTo(-width * .05, horizon * .25 + offset * .8);
+          context.bezierCurveTo(width * .22, -horizon * .28 + offset, width * .31, horizon * .32 + offset, width * .59, horizon * .02 + offset * .6);
+          context.bezierCurveTo(width * .67, -horizon * .07 + offset * .27, width * .77, -horizon * .38 + offset, width * .91, -horizon * .54 + offset);
+          context.strokeStyle = light;
+          context.globalAlpha = .34 * Math.sin((i + 1) / 24 * Math.PI);
+          context.lineWidth = 1.15 + i * .035;
+          context.stroke();
+        }
+        context.restore();
+
+        for (const [x, y, size] of stars) {
+          ellipse(x * width, y * horizon * .96, .35 + size * .85, .35 + size * .85,
+            "rgba(221, 232, 255, " + (.16 + size * .55) + ")");
+        }
+
+        const moonX = width * .824;
+        const moonY = horizon * .46;
+        const moonRadius = Math.min(19, width * .035);
+        ellipse(moonX, moonY, moonRadius * 2.8, moonRadius * 2.8, radial(moonX, moonY, moonRadius * 2.8, "#d5d6ff36", "#cbceff00"));
+        ellipse(moonX, moonY, moonRadius, moonRadius, linear(moonX, moonY - moonRadius, moonX, moonY + moonRadius, [[0, "#eef5ff"], [1, "#b6bef3"]]));
+        ellipse(moonX - moonRadius * .24, moonY + moonRadius * .18, moonRadius * .19, moonRadius * .16, "#9eafe445");
+        ellipse(moonX + moonRadius * .38, moonY - moonRadius * .28, moonRadius * .22, moonRadius * .25, "#aab8e755");
+      }
+
+      function paintMountains(horizon) {
+        const ridge = (coordinates) => coordinates.map(([x, y]) => [x * width, horizon + y * height]);
+        polygon(ridge([[0,0],[0,-.075],[.06,-.083],[.099,-.142],[.135,-.115],[.178,-.185],[.21,-.155],[.247,-.1],[.27,-.123],[.32,-.067],[.39,0]]), "#484f89");
+        polygon(ridge([[.094,-.132],[.099,-.142],[.135,-.115],[.178,-.185],[.21,-.155],[.23,-.118],[.197,-.135],[.183,-.149],[.173,-.132],[.158,-.143],[.134,-.098]]), "#929ad059");
+        polygon(ridge([[.61,0],[.66,-.052],[.712,-.043],[.765,-.111],[.796,-.094],[.841,-.146],[.886,-.106],[.914,-.123],[.955,-.094],[1,-.11],[1,0]]), "#505b99");
+        polygon(ridge([[.774,-.106],[.796,-.094],[.841,-.146],[.886,-.106],[.913,-.122],[.939,-.102],[.913,-.104],[.882,-.085],[.846,-.111],[.836,-.103],[.824,-.119],[.799,-.083]]), "#a6aee15c");
+        polygon(ridge([[0,.012],[0,-.042],[.068,-.051],[.103,-.093],[.157,-.061],[.191,-.069],[.249,-.032],[.35,.012]]), "#333e78");
+        polygon(ridge([[.65,.012],[.704,-.028],[.766,-.039],[.803,-.069],[.849,-.059],[.884,-.077],[.92,-.057],[.96,-.074],[1,-.067],[1,.012]]), "#394680");
+        polygon(ridge([[0,0],[0,-.042],[.068,-.051],[.103,-.093],[.116,-.086],[.102,-.071],[.08,-.039],[.142,-.017],[.048,-.019]]), "#6b7bb04a");
+        polygon(ridge([[.767,-.04],[.803,-.069],[.849,-.059],[.884,-.077],[.915,-.061],[.889,-.058],[.856,-.037],[.822,-.054],[.805,-.046],[.776,-.025]]), "#778ac15e");
+      }
+
+      function paintWater(horizon, iceY) {
+        context.fillStyle = linear(0, horizon, 0, height, [
+          [0, "#5769af"], [.13, "#3b518d"], [.52, "#243966"], [1, "#16264d"]
+        ]);
+        context.fillRect(0, horizon, width, height - horizon);
+        context.fillStyle = radial(width * .53, horizon - 14, width * .42, "#98b8ff49", "#81a5ef00");
+        context.fillRect(0, horizon, width, height - horizon);
+        const reflection = radial(width * .52, iceY, width * .3, "#68e9ec23", "#68e9ec00");
+        context.fillStyle = reflection;
+        context.fillRect(0, horizon, width, height - horizon);
+
+        for (const [x, depth, size] of ripples) {
+          const y = horizon + 3 + depth ** 1.53 * (height - horizon - 4);
+          const length = (3 + size * 53) * (.32 + depth) * Math.min(1.3, width / 430);
+          const wave = linear(width * x - length / 2, y, width * x + length / 2, y, [
+            [0, "#a8c9ff00"], [.5, depth < .32 ? "#a8c9ff6a" : "#a8c9ff42"], [1, "#a8c9ff00"]
+          ]);
+          ellipse(width * x, y, length / 2, .34 + depth * .66, wave);
+        }
+      }
+
+      function paintIce(x, y, scale, glow, low) {
+        if (scale <= .004) return;
+        context.save();
+        context.translate(x, y);
+        context.scale(scale, scale);
+        ellipse(6, 28, 233, 33, "#111d415c");
+        ellipse(0, 39, 230, 13, "rgba(113, 238, 255, " + (.09 + glow * .16) + ")");
+        polygon([[-218,4],[-183,29],[-124,46],[-82,67],[-30,64],[26,74],[61,60],[111,62],[171,42],[220,8],[181,-12],[-195,-12]], linear(0,-10,0,70,[[0,"#63f0ec"],[.56,"#4f9dcc"],[1,"#5277b5"]]));
+        polygon([[-217,5],[-175,13],[-130,27],[-124,46],[-183,29]], "#3a70a8");
+        polygon([[-130,27],[-89,25],[-70,34],[-82,67],[-124,46]], "#61a5c5");
+        polygon([[-70,34],[-7,32],[26,74],[-30,64],[-82,67]], "#72bdcf");
+        polygon([[-7,32],[64,37],[61,60],[26,74]], "#6a97c5");
+        polygon([[64,37],[115,26],[111,62],[61,60]], "#75c4d6");
+        polygon([[115,26],[179,13],[171,42],[111,62]], "#5497c3");
+        polygon([[179,13],[220,8],[171,42]], "#90d5e4");
+        polygon([[-218,4],[-197,-13],[-164,-22],[-141,-42],[-89,-52],[-38,-48],[18,-62],[60,-51],[116,-49],[151,-30],[193,-24],[220,8],[179,13],[115,26],[64,37],[-7,32],[-70,34],[-89,25],[-130,27],[-175,13]], linear(-36,-57,60,41,[[0,"#f1ffff"],[.48,"#cef5f9"],[1,"#a1e8ec"]]), low ? "#ffe0b5" : "#d9fcff", 2.2);
+        polygon([[-197,-13],[-164,-22],[-141,-42],[-89,-52],[-38,-48],[-92,-23],[-120,-25],[-148,-1]], "#fffefe9c");
+        polygon([[18,-62],[60,-51],[116,-49],[151,-30],[107,-34],[57,-24],[26,-34]], "#f6ffffa8");
+        polygon([[-175,13],[-130,27],[-89,25],[-70,34],[-7,32],[-41,12],[-94,13],[-121,1]], "#95e8ea7f");
+        polygon([[64,37],[115,26],[179,13],[220,8],[193,-24],[166,-15],[134,-17],[108,1]], "#7cd6e250");
+        shape("M-150 -13 L-131 -7 L-101 -13 L-80 -7 M71 16 L96 8 L116 10 L147 0 M-24 -40 L-2 -32 L22 -37", "transparent", "#78c3df82", 1.6);
+        shape("M-156 25 L-143 30 M-48 44 L-26 45 M86 46 L96 43 M145 27 L162 23", "transparent", "#defaff61", 2);
+        if (stage >= 1) shape("M151 -30 L123 -19 L130 -9 L111 3 L115 26 M-164 -22 L-151 -9 L-159 4", "transparent", "#4b86ab", 2.4);
+        context.restore();
+      }
+
+      function paintOrca(x, y, scale, tilt) {
+        context.save();
+        context.translate(x, y);
+        context.rotate(tilt);
+        context.scale(scale, scale);
+        const skin = linear(0, -48, 0, 26, [[0, "#344462"], [.55, "#111c37"], [1, "#070f25"]]);
+        shape("M-54 12 C-81 9 -83 -9 -66 -22 C-52 -34 -32 -34 -11 -30 C-5 -41 -3 -58 -6 -72 C10 -69 22 -47 24 -24 C43 -17 61 -9 75 -7 C86 -20 101 -21 113 -16 C103 -11 101 -4 102 1 C110 4 117 12 118 19 C105 17 92 13 78 4 C64 7 42 20 16 23 C-13 28 -37 23 -54 12 Z", skin, "#6685ad", 1.2);
+        shape("M-76 -1 C-62 6 -46 7 -31 7 C-15 9 -14 15 10 17 C-11 25 -38 23 -58 14 C-68 10 -75 6 -76 -1 Z", "#e7f6ff");
+        ellipse(-43, -17, 14, 6, "#f2fcff", -.29);
+        ellipse(-60, -12, 2.3, 2.5, "#050d21");
+        shape("M-13 7 C-1 7 17 13 29 31 C13 34 -2 28 -13 16 Z", "#111e3c", "#536d95");
+        context.restore();
+      }
+
+      function paintSeal(x, y, scale, facing = 1) {
+        context.save();
+        context.translate(x, y);
+        context.scale(scale * facing, scale);
+        const fur = linear(0, -35, 0, 11, [[0, "#aebdd3"], [1, "#647c9a"]]);
+        ellipse(-8, 3, 32, 8, "#0c214bb0");
+        shape("M-36 3 C-32 -12 -13 -13 -8 -22 C-5 -39 19 -42 27 -28 C32 -21 28 -18 37 -15 C45 -8 38 2 23 3 Z", fur, "#c0d3e4");
+        ellipse(25, -13, 11, 7, "#d0deed");
+        ellipse(19, -23, 2.6, 3, "#17233e");
+        ellipse(35, -14, 3.2, 2.8, "#17233e");
+        shape("M30 -11 L45 -10 M29 -8 L42 -5 M27 -5 L38 -1", "transparent", "#edf6ff", 1);
+        context.restore();
+      }
+
+      function paintSplash(x, y, scale, wave) {
+        if (wave <= 0) return;
+        context.save();
+        context.translate(x, y);
+        context.scale(scale, scale);
+        context.globalAlpha = wave;
+        shape("M-61 0 Q-43 -10 -25 -3 Q-28 -24 -45 -29 Q-20 -30 -12 -11 Q-2 -32 10 -39 Q5 -21 15 -9 Q36 -29 49 -22 Q36 -15 33 -2 Q51 -6 65 2 Q28 12 -11 9 Q-43 8 -61 0 Z", "#9cecff");
+        ellipse(-41, -22 - wave * 13, 2.8, 4, "#e3faff", -.36);
+        ellipse(30, -24 - wave * 16, 3.3, 4.6, "#e3faff", .28);
+        ellipse(49, -6 - wave * 19, 2.4, 3, "#e3faff", .40);
+        context.restore();
+      }
+
+      function paintPenguin(x, y, scale, lean) {
+        context.save();
+        context.translate(x, y);
+        context.rotate(lean);
+        context.scale(scale, scale);
+        ellipse(0, 3, 44, 8, "#42739f46");
+        const feet = linear(0,-9,0,6,[[0,"#ffd98a"],[1,"#f3a16e"]]);
+        ellipse(-13, -1, 14, 5.5, feet, -.12);
+        ellipse(16, -1, 14, 5.5, feet, .12);
+
+        const feathers = linear(-38,-90,40,-10,[[0,"#465784"],[.4,"#263153"],[1,"#101b37"]]);
+        shape("M-27 -61 C-42 -60 -50 -37 -43 -21 C-39 -15 -30 -29 -25 -37 Z", "#293758", "#607197", 1.4);
+        shape("M29 -60 C38 -59 49 -43 47 -29 C46 -20 36 -27 29 -36 Z", "#263653", "#526388", 1.4);
+        shape("M-37 -48 C-38 -62 -29 -69 -29 -77 C-40 -105 -22 -124 2 -124 C29 -124 42 -102 33 -82 C28 -70 40 -67 40 -47 C42 -20 27 -5 1 -5 C-25 -5 -40 -20 -37 -48 Z", feathers, "#7181aa", 1.6);
+        const belly = linear(-12,-66,14,-9,[[0,"#fcfbff"],[.68,"#e5eafa"],[1,"#b8c8e7"]]);
+        shape("M-23 -59 C-13 -75 14 -76 27 -56 C36 -44 31 -23 18 -15 C9 -9 -9 -9 -20 -17 C-33 -25 -34 -44 -23 -59 Z", belly);
+        shape("M-26 -92 C-24 -112 -6 -113 1 -101 C11 -114 28 -111 30 -93 C31 -80 17 -73 2 -73 C-13 -73 -28 -80 -26 -92 Z", "#f1f3fd");
+        ellipse(-17, -87, 5, 2.6, "#edabb38f");
+        ellipse(21, -87, 5, 2.6, "#edabb38f");
+        ellipse(-10, -93, 3.3, 4, "#192543");
+        ellipse(13, -93, 3.3, 4, "#192543");
+        ellipse(-9.2, -94.6, 1, 1, "#fdfdff");
+        ellipse(13.8, -94.6, 1, 1, "#fdfdff");
+        shape("M-5 -89 Q2 -94 9 -89 Q5 -82 2 -82 Q-1 -82 -5 -89 Z", "#ffcd87", "#dda768", .8);
+
+        const scarf = linear(-26,-76,27,-54,[[0,"#9795ff"],[.5,"#7775ed"],[1,"#5d56c9"]]);
+        shape("M-25 -75 Q2 -65 30 -75 Q35 -71 32 -63 Q3 -51 -25 -62 Q-31 -67 -25 -75 Z", scarf, "#b2a9ff", 1.1);
+        shape("M16 -65 Q28 -64 32 -67 Q41 -60 45 -49 L35 -44 Q31 -49 24 -54 L17 -54 Z", scarf, "#a59af2", 1.1);
+        shape("M-16 -68 Q-1 -64 12 -66 M27 -60 L36 -53 M30 -57 L39 -50", "transparent", "#d3c8ff9c", 1.4);
+        context.restore();
+      }
+
+      function paintParticles(x, y, scale, progress, direction) {
+        if (!direction || progress >= 1) return;
+        const opacity = Math.sin(progress * Math.PI) * .83;
+        context.save();
+        context.translate(x, y);
+        context.scale(scale, scale);
+        for (const [a, b, size] of particles) {
+          const spread = direction === "expense" ? 105 + progress * 138 : 153 - progress * 37;
+          const fx = (a * 2 - 1) * spread;
+          const fy = direction === "expense" ? 7 + b * 35 - Math.sin(progress * Math.PI) * (16 + b * 26) : 25 - progress * (79 + b * 17) + b * 26;
+          context.globalAlpha = opacity * (.45 + size * .55);
+          polygon([[fx - 2.7, fy], [fx, fy - 3.8 - size * 2], [fx + 2.7, fy], [fx, fy + 3]], direction === "expense" ? "#d0ebff" : "#dcfff0");
+        }
+        context.restore();
+      }
+
+      function draw(progress = 1, direction = null) {
+        if (!width || !height) return;
+        const horizon = height * .625;
+        const iceX = width * .5;
+        const iceY = height * .776;
+        const scale = Math.min(width / 492, height / 268, 1.29);
+        const iceScale = Math.sqrt(ratio);
+        const collapse = direction === "collapse";
+        const swim = collapse ? Math.max(0, (progress - .34) / .66) : 0;
+        const fall = collapse ? Math.min(1, Math.max(0, (progress - .18) / .20)) : 0;
+        const glow = direction === "deposit" ? Math.sin(progress * Math.PI) : 0;
+        context.clearRect(0, 0, width, height);
+        paintSky(horizon);
+        paintMountains(horizon);
+        paintWater(horizon, iceY);
+        paintIce(iceX, iceY, scale * iceScale, glow, stage >= 3);
+        paintParticles(iceX, iceY, scale, collapse ? Math.min(1, progress / .49) : progress, collapse ? "expense" : direction);
+        const bob = direction ? Math.sin(progress * Math.PI) * (direction === "deposit" ? -9 : 5) : 0;
+        const penguinX = iceX + width * .88 * swim;
+        const penguinY = iceY + (fall * 51 - 21 * iceScale - 4 - bob) * scale;
+        const lean = collapse ? .46 * fall : Math.sin(progress * Math.PI) * (direction === "expense" ? .085 : -.045);
+        if ((stage >= 3 && stage < 5) || collapse) {
+          const entering = transition?.fromStage < 3 && !collapse ? (1 - progress) ** 2 : 0;
+          paintSeal(width * (.16 - .27 * entering + 1.04 * swim), iceY + 30 * scale, scale * .96);
+        }
+        if (collapse) {
+          const approach = Math.min(1, swim * 3);
+          const orcaX = width * (.82 - .40 * approach + .81 * Math.max(0, (swim - .28) / .72));
+          paintOrca(orcaX, iceY + 48 * scale, scale * (swim > .28 ? -.80 : .80), 0);
+        } else if (stage === 4) {
+          const entering = transition?.fromStage < 4 ? (1 - progress) ** 2 : 0;
+          paintOrca(width * (.84 + .34 * entering), iceY + 50 * scale, scale * .68, 0);
+        }
+        if (stage < 5 || collapse) paintPenguin(penguinX, penguinY, scale * 1.02, lean);
+        if (collapse) {
+          const splash = Math.max(0, 1 - Math.abs(progress - .36) / .13);
+          paintSplash(penguinX, iceY + 17 * scale, scale, splash);
+        }
+      }
+
+      function resize() {
+        const bounds = canvas.getBoundingClientRect();
+        width = bounds.width;
+        height = bounds.height;
+        const density = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * density);
+        canvas.height = Math.round(height * density);
+        context.setTransform(density, 0, 0, density, 0, 0);
+        draw();
+      }
+
+      function tick(now) {
+        const progress = Math.min(1, (now - transition.start) / transition.duration);
+        const iceProgress = transition.direction === "collapse" ? Math.min(1, progress / .31) : progress;
+        const eased = 1 - (1 - iceProgress) ** 3;
+        ratio = transition.from + (transition.to - transition.from) * eased;
+        if (progress < 1) {
+          draw(progress, transition.direction);
+          frame = requestAnimationFrame(tick);
+        } else {
+          const { onFinish } = transition;
+          ratio = transition.to;
+          transition = null;
+          frame = 0;
+          draw();
+          onFinish?.();
+        }
+      }
+
+      function setRatio(next, animate, direction, nextStage = stage, onFinish = null) {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        transition = null;
+        const fromStage = stage;
+        stage = nextStage;
+        if (!animate || reducedMotion.matches || (Math.abs(next - ratio) < .000001 && !direction)) {
+          ratio = next;
+          draw();
+          onFinish?.();
+          return;
+        }
+        const duration = direction === "collapse" ? 2100 : 840;
+        transition = { from: ratio, to: next, fromStage, start: performance.now(), duration, direction, onFinish };
+        frame = requestAnimationFrame(tick);
+      }
+
+      resize();
+      new ResizeObserver(resize).observe(canvas);
+      reducedMotion.addEventListener("change", () => {
+        if (transition && reducedMotion.matches) setRatio(transition.to, false, null, stage, transition.onFinish);
+      });
+      return { setRatio };
+    }
+  </script>
+</body>
+</html>

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f6f7fc">
-  <meta name="description" content="저축을 먼저 챙기고, 이번 달 생활비를 펭귄 빙하로 확인해요.">
-  <title>우리 집 빙하 · 생활비</title>
+  <meta name="description" content="지출을 기록할 때마다 빙하가 줄고 바다사자가 다가와요.">
+  <title>얼음섬 · 생활비</title>
   <style>
     :root {
       color-scheme: light;
@@ -53,7 +53,6 @@
     .scene-head { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 26px; }
     .balance-label { color: #dbe1ff; font-size: 14px; font-weight: 650; line-height: 1.35; letter-spacing: -.02em; }
     .balance { display: block; margin-top: 6px; line-height: 1.05; font-size: clamp(26px, 4.2vw, 44px); font-weight: 800; letter-spacing: -.058em; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-    .balance .unit { margin-left: 5px; font-size: .5em; letter-spacing: 0; vertical-align: .1em; }
     .scene[data-level="empty"] .balance { color: #ffdce6; }
     .ice-chip { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 8px 11px; border: 1px solid #d4dfff48; border-radius: 100px; background: #151f4bcc; color: #e9edff; font-size: 12px; font-weight: 700; white-space: nowrap; }
     .ice-chip svg { color: #a4ddff; }
@@ -68,7 +67,6 @@
     .summary > div + div { border-left: 1px solid var(--line); }
     .summary dt { margin-bottom: 7px; color: var(--muted); font-size: 12px; line-height: 1.3; letter-spacing: -.035em; }
     .summary dd { font-weight: 800; font-size: clamp(14px, 2vw, 18px); line-height: 1.25; letter-spacing: -.045em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .summary dd .unit { margin-left: 3px; font-size: .8em; font-weight: 650; }
     .overview-note { border-top: 1px solid var(--line); padding: 13px 24px; display: flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.45; color: var(--muted); letter-spacing: -.025em; }
     .overview-note[data-level="low"] { background: var(--warning-bg); color: var(--warning); }
     .overview-note[data-level="empty"] { background: var(--danger-bg); color: var(--danger); }
@@ -86,11 +84,7 @@
     }
     .currency-input::placeholder { color: #717b92; font-weight: 550; opacity: 1; }
     .currency-input:focus { border-color: #6d67e3; outline: 3px solid #ebe9ff; outline-offset: 0; background: #fff; }
-    .currency-input[aria-invalid="true"] { border-color: #c85370; }
     .currency-unit { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 650; font-size: 13px; pointer-events: none; }
-    .calculation { min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 11px; padding: 10px 12px; border-radius: 10px; background: var(--accent-subtle); color: var(--accent-deep); font-size: 13px; font-weight: 750; letter-spacing: -.02em; }
-    .calculation strong { text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .calculation[data-level="empty"] { color: var(--danger); background: var(--danger-bg); }
     .btn-primary { width: 100%; display: flex; justify-content: center; align-items: center; gap: 9px; min-height: 48px; padding: 10px 13px; border: 1px solid transparent; border-radius: 11px; color: #fff; background: var(--accent); font-size: 15px; font-weight: 750; letter-spacing: -.03em; transition: background .16s ease, transform .16s ease; }
     .btn-primary:hover { background: var(--accent-deep); }
     .btn-primary:active { transform: translateY(1px); }
@@ -102,26 +96,12 @@
     .setup-actions { display: flex; gap: 8px; }
     .cancel-button { flex-shrink: 0; min-width: 63px; padding-inline: 12px; background: #f0f1f8; }
     .error { color: var(--danger); margin-bottom: 10px; font-size: 13px; font-weight: 650; line-height: 1.45; }
-    .segmented { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 16px; padding: 4px; border-radius: 12px; background: #f0f1f8; }
-    .segment { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; border: 1px solid transparent; border-radius: 9px; color: var(--muted); background: transparent; font-size: 14px; font-weight: 800; letter-spacing: -.025em; }
-    .segment:hover { color: var(--accent-deep); }
-    .segment[aria-pressed="true"] { color: var(--accent-deep); background: var(--surface); border-color: #e6e5f7; box-shadow: 0 1px 3px #11194b14; }
     .preview { display: grid; gap: 6px; padding: 13px 12px; margin-bottom: 12px; min-height: 74px; border-radius: 11px; color: var(--accent-deep); background: var(--accent-subtle); font-size: 13px; line-height: 1.4; letter-spacing: -.025em; }
     .preview[data-level="low"] { color: var(--warning); background: var(--warning-bg); }
     .preview[data-level="empty"] { color: var(--danger); background: var(--danger-bg); }
     .preview-line { display: flex; justify-content: space-between; align-items: baseline; gap: 7px; }
     .preview-line strong { text-align: right; font-variant-numeric: tabular-nums; font-size: 16px; letter-spacing: -.04em; overflow-wrap: anywhere; }
     .preview-caption { font-size: 12px; font-weight: 650; }
-    .daily-budget { display: grid; gap: 5px; padding-top: 8px; margin-top: 2px; border-top: 1px solid currentColor; }
-    .over-budget { display: grid; gap: 9px; padding: 12px; border: 1px solid #f1c7d2; border-radius: 11px; background: var(--danger-bg); color: var(--danger); }
-    .over-budget p { font-size: 13px; font-weight: 700; line-height: 1.45; }
-    .over-budget-actions { display: flex; flex-wrap: wrap; gap: 6px 10px; }
-    .over-budget-actions button { flex: 1 1 105px; min-height: 44px; }
-    .over-budget-actions .btn-primary { background: var(--danger); }
-    .over-budget-actions .text-button { color: var(--danger); }
-    .last-action { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; padding-inline: 10px; border-radius: 9px; background: var(--green-bg); color: var(--green); }
-    .last-action p { padding-block: 9px; font-size: 12px; font-weight: 700; line-height: 1.4; }
-    .last-action button { flex-shrink: 0; color: inherit; }
     .records { margin-top: 21px; padding: 21px 24px 7px; }
     .records-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .records h2 { font-size: 19px; }
@@ -130,14 +110,15 @@
     .record-list { list-style: none; padding: 0; margin: 8px 0 0; }
     .record { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, auto) auto; align-items: center; gap: 10px; min-height: 62px; padding-block: 10px; border-top: 1px solid var(--line); }
     .record-icon { display: grid; place-items: center; width: 33px; height: 33px; border-radius: 9px; background: var(--accent-subtle); color: var(--accent-deep); }
-    .record-icon[data-type="deposit"] { background: var(--green-bg); color: var(--green); }
     .record-kind { display: block; font-size: 14px; font-weight: 800; }
     .record-date { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
     .record-amount { font-size: 14px; font-weight: 800; text-align: right; overflow-wrap: anywhere; }
-    .record-amount[data-type="deposit"] { color: var(--green); }
     .result { width: min(360px, calc(100% - 36px)); padding: 22px; color: var(--ink); }
     .result::backdrop { background: #10183c99; }
     .result p { margin-block: 10px 18px; color: var(--danger); font-weight: 700; }
+    .record-actions { display: flex; gap: 8px; }
+    .record-actions button { min-height: 44px; }
+    #category-list li { display: flex; justify-content: space-between; gap: 8px; padding-block: 10px; border-top: 1px solid var(--line); font-size: 14px; }
     .storage-status { margin-top: 14px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: right; letter-spacing: -.02em; }
     .storage-status[data-error="true"] { color: var(--danger); }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -193,7 +174,7 @@
     <div class="wrap topbar-inner">
       <span class="brand">
         <span class="brand-mark"><svg width="23" height="23" aria-hidden="true"><use href="#icon-ice"/></svg></span>
-        우리 집 빙하
+        얼음섬
       </span>
       <time class="month" id="month">
         <svg width="16" height="16" aria-hidden="true"><use href="#icon-calendar"/></svg>
@@ -227,40 +208,26 @@
         <dl class="summary">
           <div><dt>생활비 예산</dt><dd id="total-budget">—</dd></div>
           <div><dt>기록한 지출</dt><dd id="total-spent">—</dd></div>
-          <div><dt>추가 입금</dt><dd id="total-deposits">—</dd></div>
+          <div><dt>예산 소진 예상</dt><dd id="forecast-date">—</dd></div>
         </dl>
         <div class="overview-note" id="overview-note" data-level="setup">
           <svg width="16" height="16" aria-hidden="true"><use href="#icon-info"/></svg>
-          <p id="overview-message">월수입에서 고정비와 저축 목표를 빼면 생활비 예산이 돼요.</p>
+          <p id="overview-message">이번 달 예산을 정하면 빙하가 생겨요.</p>
         </div>
       </section>
 
       <section class="card flow-card" id="setup-panel" aria-labelledby="setup-title">
-        <h2 id="setup-title" tabindex="-1">생활비 기준 정하기</h2>
-        <p class="panel-desc">이번 달 내 실수령액을 기준으로 잡아요.</p>
-        <form id="setup-form" novalidate>
-          <label class="field" for="income">
-            <span class="field-label">월수입</span>
-            <span class="field-box"><input class="currency-input" id="income" name="income" inputmode="numeric" autocomplete="off" placeholder="예: 4,500,000" required aria-describedby="setup-error"><span class="currency-unit" aria-hidden="true">원</span></span>
-          </label>
-          <label class="field" for="fixed">
-            <span class="field-label">고정비</span>
-            <span class="field-box"><input class="currency-input" id="fixed" name="fixed" inputmode="numeric" autocomplete="off" placeholder="예: 2,500,000" required aria-describedby="setup-error"><span class="currency-unit" aria-hidden="true">원</span></span>
-          </label>
-          <label class="field" for="savings">
-            <span class="field-label">저축 목표</span>
-            <span class="field-box"><input class="currency-input" id="savings" name="savings" inputmode="numeric" autocomplete="off" placeholder="예: 1,000,000" required aria-describedby="setup-error"><span class="currency-unit" aria-hidden="true">원</span></span>
-          </label>
-          <div class="calculation" id="calculation">
-            <span>기본 생활비 예산</span><strong id="base-budget">—</strong>
-          </div>
+        <h2 id="setup-title" tabindex="-1">이번 달 예산 정하기</h2>
+        <p class="panel-desc">혼자 쓰는 가계부예요. 이번 달 월급이나 생활비 목표를 적어 주세요.</p>
+        <form id="setup-form">
+          <label class="field"><span class="field-label">이름</span>
+            <input class="currency-input" id="profile-name" maxlength="30" required placeholder="내 이름"></label>
+          <label class="field"><span class="field-label">월급 또는 목표 금액</span>
+            <span class="field-box"><input class="currency-input" id="income" inputmode="numeric" required autocomplete="off" placeholder="예: 2,000,000"><span class="currency-unit" aria-hidden="true">원</span></span></label>
           <p id="setup-error" class="error" role="alert" hidden></p>
           <div class="setup-actions">
             <button class="text-button cancel-button" id="cancel-setup" type="button" hidden>취소</button>
-            <button class="btn-primary" id="save-budget" type="submit">
-              <span id="save-budget-label">생활비 예산 설정</span>
-              <svg width="17" height="17" aria-hidden="true"><use href="#icon-right"/></svg>
-            </button>
+            <button class="btn-primary" type="submit" id="save-budget">시작하기</button>
           </div>
           <button class="text-button sample-button" id="fill-sample" type="button">예시 금액 채우기</button>
         </form>
@@ -268,45 +235,32 @@
 
       <section class="card flow-card" id="entry-panel" aria-labelledby="entry-title" hidden>
         <div class="panel-header">
-          <h2 id="entry-title" tabindex="-1">금액 기록</h2>
-          <button class="text-button edit-button" id="edit-budget" type="button">기준 수정</button>
+          <h2 id="entry-title" tabindex="-1">내 지출</h2>
+          <button class="text-button edit-button" id="edit-budget" type="button">예산 수정</button>
         </div>
-        <p class="panel-desc" id="entry-description">금액을 입력하면 저장 후 잔액을 미리 볼 수 있어요.</p>
-        <div class="segmented" id="entry-types" role="group" aria-label="기록 유형">
-          <button class="segment" type="button" data-type="expense" aria-pressed="true">
-            <svg width="16" height="16" aria-hidden="true"><use href="#icon-minus"/></svg> 지출
-          </button>
-          <button class="segment" type="button" data-type="deposit" aria-pressed="false">
-            <svg width="16" height="16" aria-hidden="true"><use href="#icon-plus"/></svg> 입금
-          </button>
-        </div>
-        <form id="entry-form" novalidate>
-          <label class="field" for="amount">
-            <span class="field-label" id="amount-label">지출 금액</span>
-            <span class="field-box"><input class="currency-input" id="amount" name="amount" inputmode="numeric" autocomplete="off" placeholder="금액 입력" required aria-describedby="entry-error"><span class="currency-unit" aria-hidden="true">원</span></span>
-          </label>
-          <p id="entry-error" class="error" aria-live="polite" hidden></p>
-          <div class="preview" id="preview" aria-live="polite" aria-atomic="true" hidden>
-            <div class="preview-line"><span>저장 후 남은 생활비</span><strong id="preview-balance"></strong></div>
-            <p class="preview-caption" id="preview-caption"></p>
-            <div class="daily-budget">
-              <p class="preview-caption" id="days-left"></p>
-              <div class="preview-line"><span>하루에 쓸 수 있는 금액</span><strong id="daily-change"></strong></div>
-            </div>
+        <p class="panel-desc" id="forecast-message"></p>
+        <button class="btn-primary" id="new-entry" type="button">+ 지출 기록하기</button>
+        <form id="entry-form" hidden>
+          <label class="field"><span class="field-label">지출 금액</span>
+            <span class="field-box"><input class="currency-input" id="amount" inputmode="numeric" required autocomplete="off" placeholder="금액 입력"><span class="currency-unit" aria-hidden="true">원</span></span></label>
+          <div class="setup-actions field">
+            <button class="text-button cancel-button" type="button" data-add="10000">+1만 원</button>
+            <button class="text-button cancel-button" type="button" data-add="30000">+3만 원</button>
           </div>
-          <button class="btn-primary" id="save-entry" type="submit" disabled>지출 저장</button>
-          <div class="over-budget" id="over-budget" hidden>
-            <p id="over-budget-message" role="alert"></p>
-            <div class="over-budget-actions">
-              <button class="text-button" id="revise-expense" type="button">금액 다시 보기</button>
-              <button class="btn-primary" id="confirm-expense" type="button">초과 지출 저장</button>
-            </div>
+          <label class="field"><span class="field-label">지출 내용 <small>(선택)</small></span>
+            <input class="currency-input" id="memo" maxlength="80" placeholder="예: 점심"></label>
+          <label class="field"><span class="field-label">날짜</span><input class="currency-input" id="entry-date" type="date" required></label>
+          <label class="field"><span class="field-label">카테고리</span><select class="currency-input" id="category"></select></label>
+          <p id="entry-error" class="error" role="alert" hidden></p>
+          <div class="preview" id="preview" aria-live="polite" hidden>
+            <div class="preview-line"><span>저장 후 남은 금액</span><strong id="preview-balance"></strong></div>
+            <p class="preview-caption" id="preview-caption"></p>
+          </div>
+          <div class="setup-actions">
+            <button class="text-button cancel-button" id="cancel-entry" type="button">취소</button>
+            <button class="btn-primary" id="save-entry" type="submit" disabled>저장하기</button>
           </div>
         </form>
-        <div class="last-action" id="last-action" hidden>
-          <p id="last-action-text" role="status"></p>
-          <button class="text-button" id="undo-entry" type="button">되돌리기</button>
-        </div>
       </section>
     </div>
 
@@ -315,8 +269,15 @@
         <h2 id="records-title">이번 달 기록</h2>
         <span class="record-count" id="record-count">0건</span>
       </div>
-      <p class="record-empty" id="record-empty">저장한 지출이나 입금이 여기에 표시돼요.</p>
+      <p class="record-empty" id="record-empty">저장한 지출이 여기에 표시돼요.</p>
       <ul class="record-list" id="record-list"></ul>
+    </section>
+    <section class="card records" id="categories" aria-labelledby="categories-title" hidden>
+      <div class="records-header">
+        <h2 id="categories-title">카테고리별 지출</h2>
+      </div>
+      <p class="record-empty" id="top-category"></p>
+      <ul class="record-list" id="category-list"></ul>
     </section>
     <p class="storage-status" id="storage-message" role="status" hidden></p>
     <p class="sr-only" id="announcement" role="status" aria-atomic="true"></p>
@@ -337,7 +298,7 @@
       <span class="record-icon"><svg width="16" height="16" aria-hidden="true"><use/></svg></span>
       <span><span class="record-kind"></span><time class="record-date"></time></span>
       <strong class="record-amount"></strong>
-      <button class="text-button record-delete" type="button">삭제</button>
+      <span class="record-actions"><button class="text-button record-edit" type="button">수정</button> <button class="text-button record-delete" type="button">삭제</button></span>
     </li>
   </template>
 
@@ -348,297 +309,256 @@
     const numberFormat = new Intl.NumberFormat("ko-KR");
     const ratioFormat = new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 1 });
     const monthFormat = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" });
-    const recordDateFormat = new Intl.DateTimeFormat("ko-KR", {
-      month: "long", day: "numeric", hour: "numeric", minute: "numeric"
-    });
+    const dayFormat = new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric" });
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const maximumAmount = 999_999_999_999;
+    const categories = ["식비", "카페", "교통", "쇼핑", "문화", "생활", "기타"];
     const stages = [
-      { limit: 0.30, name: "안정", line: "아직 미끄럼 탈 자리가 넉넉해요!" },
-      { limit: 0.50, name: "금이 감", line: "어? 발밑에서 쩍 소리가 났어요." },
-      { limit: 0.70, name: "주의", line: "앗, 빙하 한 조각이 떨어졌어요!" },
-      { limit: 0.90, name: "경고", line: "왼쪽에 바다표범이 나타났어요!" },
-      { limit: 1, name: "위기", line: "오른쪽엔 범고래까지!" },
-      { limit: Infinity, name: "붕괴", line: "풍덩! 으악, 도망가자!" }
+      { limit: .20, title: "여유", line: "아직 미끄럼 탈 자리가 넉넉해요!" },
+      { limit: .40, title: "여유", line: "어? 발밑에서 쩍 소리가 났어요." },
+      { limit: .60, title: "슬슬", line: "앗, 빙하 한 조각이 떨어졌어요!" },
+      { limit: .80, title: "위험", line: "바다사자가 다가오고 있어요!" },
+      { limit: 1, title: "바다사자 접근", line: "으악, 바로 코앞이에요!" },
+      { limit: Infinity, title: "꿀꺽", line: "꿀꺽! 이번 달 빙하가 사라졌어요." }
     ];
-    const typeNames = { expense: "지출", deposit: "입금" };
-    const currentDate = new Date();
-    const monthKey = currentDate.getFullYear() + "-" + String(currentDate.getMonth() + 1).padStart(2, "0");
-    const storageKey = "our-glacier:v1:" + monthKey;
-    const budgetInputs = ["income", "fixed", "savings"].map(byId);
+    const glacier = createGlacier(byId("ice-scene"));
+    const entryForm = byId("entry-form");
     const amountInput = byId("amount");
-    const typeButtons = Array.from(document.querySelectorAll(".segment"));
+    const today = new Date();
+    const monthKey = localDate(today).slice(0, 7);
+    const storageKey = "ice-island:v1:" + monthKey;
     let storageAvailable = true;
     let state = loadState();
-    let entryType = "expense";
-    let lastEntry = null;
+    let editingId = null;
+
+    function localDate(date) {
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return date.getFullYear() + "-" + month + "-" + day;
+    }
 
     function parseAmount(value) {
       const digits = value.trim().replace(/[,\s]/g, "");
-      if (!/^\d+$/.test(digits)) return null;
       const amount = Number(digits);
-      return Number.isSafeInteger(amount) && amount <= maximumAmount ? amount : null;
-    }
-
-    function formatAmount(amount) {
-      return (amount < 0 ? "−" : "") + numberFormat.format(Math.abs(amount));
+      return /^\d+$/.test(digits) && Number.isSafeInteger(amount) && amount > 0 && amount <= maximumAmount ? amount : null;
     }
 
     function won(amount) {
-      return formatAmount(amount) + "원";
+      return numberFormat.format(amount) + "원";
     }
 
     function percentage(ratio) {
-      if (ratio > 0 && ratio < 0.001) return "0.1% 미만";
-      if (ratio >= 0.9995 && ratio < 1) return "100% 미만";
+      if (ratio < 1 && ratio >= .9995) return "100% 미만";
+      if (ratio > 1 && ratio < 1.0005) return "100% 초과";
       return ratioFormat.format(ratio * 100) + "%";
     }
 
-    function setMoney(element, amount) {
-      const unit = document.createElement("span");
-      unit.className = "unit";
-      unit.textContent = "원";
-      element.replaceChildren(formatAmount(amount), unit);
-    }
-
-    function budgetBase(budget) {
-      return budget.income - budget.fixed - budget.savings;
-    }
-
-    function isStoredAmount(amount) {
-      return Number.isSafeInteger(amount) && amount >= 0 && amount <= maximumAmount;
-    }
-
     function loadState() {
-      let raw;
       try {
-        raw = localStorage.getItem(storageKey);
-        storageAvailable = true;
-      } catch {
-        storageAvailable = false;
-        return { budget: null, entries: [] };
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (saved?.budget > 0 && typeof saved.name === "string" && Array.isArray(saved.entries)) return saved;
+      } catch (error) {
+        if (!(error instanceof SyntaxError)) storageAvailable = false;
       }
-
-      try {
-        const saved = JSON.parse(raw);
-        const budget = saved?.budget;
-        if (!budget || ![budget.income, budget.fixed, budget.savings].every(isStoredAmount) || budgetBase(budget) <= 0) {
-          return { budget: null, entries: [] };
-        }
-        const entries = Array.isArray(saved.entries) ? saved.entries.filter((entry) =>
-          typeof entry?.id === "string" && Object.hasOwn(typeNames, entry.type) &&
-          isStoredAmount(entry.amount) && entry.amount > 0 && Number.isFinite(Date.parse(entry.time))
-        ) : [];
-        return { budget, entries };
-      } catch {
-        return { budget: null, entries: [] };
-      }
+      return { name: "", budget: 0, entries: [] };
     }
 
-    function persist(nextState) {
-      state = nextState;
+    function persist(next) {
+      state = next;
       try {
         localStorage.setItem(storageKey, JSON.stringify(state));
         storageAvailable = true;
       } catch {
         storageAvailable = false;
       }
-      renderStorageStatus();
+      renderStorage();
     }
 
-    function computeTotals(budget, entries, draft) {
-      let spent = 0;
-      let deposits = 0;
-      for (const entry of entries) {
-        if (entry.type === "expense") spent += entry.amount;
-        else deposits += entry.amount;
-      }
-      if (draft?.type === "expense") spent += draft.amount;
-      if (draft?.type === "deposit") deposits += draft.amount;
-
-      const total = budgetBase(budget) + deposits;
-      const remaining = total - spent;
-      const ratio = Math.max(0, Math.min(1, remaining / total));
-      const used = spent / total;
+    function totals(entries = state.entries) {
+      const spent = entries.reduce((sum, entry) => sum + entry.amount, 0);
+      const remaining = state.budget - spent;
+      const used = spent / state.budget;
       const stage = stages.findIndex(({ limit }) => used < limit);
-      const level = stage === 5 ? "empty" : stage >= 3 ? "low" : "safe";
-      return { total, spent, deposits, remaining, ratio, used, stage, level };
+      return { spent, remaining, used, stage, ratio: Math.max(0, 1 - used) };
     }
 
-    function budgetNotice(totals) {
-      if (totals.remaining < 0) return "생활비 예산을 " + won(-totals.remaining) + " 초과했어요.";
-      if (totals.remaining === 0) return "이번 달 생활비를 모두 썼어요.";
-      if (totals.level === "low") return "남은 생활비와 월말까지 남은 날짜를 확인해 보세요.";
-      return "";
+    function showError(id, message = "") {
+      byId(id).hidden = !message;
+      byId(id).textContent = message;
     }
 
-    function daysUntilMonthEnd(today = new Date()) {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const end = Date.UTC(year, month + 1, 1);
-      const startOfToday = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-      return Math.max(1, (end - startOfToday) / 86_400_000);
+    function renderStorage() {
+      const message = byId("storage-message");
+      message.hidden = !state.budget && storageAvailable;
+      message.dataset.error = String(!storageAvailable);
+      message.textContent = storageAvailable ? "이번 달 기록은 이 브라우저에 저장돼요."
+        : "브라우저 저장이 제한되어 있어요. 화면을 닫으면 기록이 사라질 수 있어요.";
     }
 
-    function renderOverview(animate = false, motion = null) {
-      if (!state.budget) return;
-      const totals = computeTotals(state.budget, state.entries);
-      byId("scene").dataset.level = totals.level;
-      setMoney(byId("balance"), totals.remaining);
-      setMoney(byId("total-budget"), totals.total);
-      setMoney(byId("total-spent"), totals.spent);
-      setMoney(byId("total-deposits"), totals.deposits);
-      const stage = stages[totals.stage];
-      byId("ice-percent").textContent = stage.name + " · " + percentage(totals.used) + " 사용";
-      byId("penguin-caption").textContent = totals.spent === 0 ? "이번 달은 여기서 시작해요!" : stage.line;
+    function showSetup() {
+      byId("setup-panel").hidden = false;
+      byId("entry-panel").hidden = true;
+      byId("profile-name").value = state.name;
+      byId("income").value = state.budget ? numberFormat.format(state.budget) : "";
+      byId("setup-title").textContent = state.budget ? "이번 달 예산 수정" : "이번 달 예산 정하기";
+      byId("save-budget").textContent = state.budget ? "예산 저장" : "시작하기";
+      byId("cancel-setup").hidden = !state.budget;
+      byId("fill-sample").hidden = Boolean(state.budget);
+      showError("setup-error");
+    }
 
-      const notice = budgetNotice(totals);
-      byId("overview-note").hidden = !notice;
-      byId("overview-note").dataset.level = totals.level;
-      byId("overview-message").textContent = notice;
-      glacier.setRatio(totals.ratio, animate, motion, totals.stage, motion === "collapse" ? showBudgetResult : null);
+    function showDashboard() {
+      byId("setup-panel").hidden = true;
+      byId("entry-panel").hidden = false;
+      closeEntry();
+    }
+
+    function renderForecast({ spent, remaining }) {
+      const forecast = byId("forecast-date");
+      const message = byId("forecast-message");
+      forecast.textContent = "—";
+      if (remaining <= 0) {
+        message.textContent = "이번 달 예산을 다 썼어요. 이후 지출도 계속 기록할 수 있어요.";
+        return;
+      }
+      if (!spent) {
+        message.textContent = "지출을 기록하면 지금 속도로 예산을 언제 다 쓸지 알려드려요.";
+        return;
+      }
+
+      const elapsed = new Date().getDate();
+      const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+      const projectedDay = Math.ceil(state.budget * elapsed / spent);
+      if (projectedDay > daysInMonth) {
+        forecast.textContent = "월말 이후";
+        message.textContent = "현재 지출 속도로는 월말까지 예산이 남을 것으로 보여요.";
+        return;
+      }
+      const date = new Date(today.getFullYear(), today.getMonth(), projectedDay);
+      forecast.textContent = dayFormat.format(date);
+      message.textContent = "지금 속도라면 " + dayFormat.format(date) + "에 예산을 다 쓸 것으로 보여요.";
+    }
+
+    function renderOverview(motion = null) {
+      const summary = totals();
+      const stage = stages[summary.stage];
+      const level = summary.stage === 5 ? "empty" : summary.stage >= 3 ? "low" : "safe";
+      byId("scene").dataset.level = level;
+      byId("balance").textContent = won(summary.remaining);
+      byId("ice-percent").textContent = stage.title + " · " + percentage(summary.used) + " 사용";
+      byId("penguin-caption").textContent = motion === "collapse" ? "풍덩! 바다사자가 다가와요!" : stage.line;
+      byId("total-budget").textContent = won(state.budget);
+      byId("total-spent").textContent = won(summary.spent);
+      byId("overview-note").hidden = summary.stage < 3;
+      byId("overview-note").dataset.level = level;
+      byId("overview-message").textContent = summary.remaining < 0
+        ? "이번 달 예산을 " + won(-summary.remaining) + " 초과했어요."
+        : summary.remaining === 0 ? "이번 달 예산을 다 썼어요." : "예산을 " + percentage(summary.used) + " 사용했어요.";
+      renderForecast(summary);
+      glacier.setRatio(summary.ratio, Boolean(motion), motion, summary.stage, motion === "collapse" ? showBudgetResult : null);
     }
 
     function showBudgetResult() {
-      const { remaining } = computeTotals(state.budget, state.entries);
+      const { remaining } = totals();
       const result = byId("budget-result");
       if (remaining > 0 || result.open) return;
+      byId("penguin-caption").textContent = stages[5].line;
       byId("result-title").textContent = remaining === 0
-        ? "이번 달 생활비를 다 썼어요" : "이번 달 생활비 예산을 넘었어요";
-      byId("result-amount").textContent = remaining === 0
-        ? "남은 생활비 0원" : won(-remaining) + " 초과";
+        ? "이번 달 예산을 다 썼어요" : "이번 달 예산을 넘었어요";
+      byId("result-amount").textContent = remaining === 0 ? "남은 금액 0원" : won(-remaining) + " 초과";
       result.showModal();
     }
 
     function renderRecords() {
-      byId("records").hidden = !state.budget;
-      if (!state.budget) return;
-
+      const entries = state.entries.slice().reverse().sort((a, b) => b.date.localeCompare(a.date));
       const records = document.createDocumentFragment();
-      for (const entry of state.entries.slice().reverse()) {
+      for (const entry of entries) {
         const row = byId("record-template").content.cloneNode(true);
-        const isDeposit = entry.type === "deposit";
-        row.querySelector(".record-icon").dataset.type = entry.type;
-        row.querySelector("use").setAttribute("href", isDeposit ? "#icon-plus" : "#icon-minus");
-        row.querySelector(".record-kind").textContent = typeNames[entry.type];
-        const time = row.querySelector("time");
-        time.dateTime = entry.time;
-        time.textContent = recordDateFormat.format(new Date(entry.time));
-        const amount = row.querySelector(".record-amount");
-        amount.dataset.type = entry.type;
-        amount.textContent = (isDeposit ? "+" : "−") + won(entry.amount);
-        const remove = row.querySelector(".record-delete");
-        remove.setAttribute("aria-label", typeNames[entry.type] + " " + won(entry.amount) + " 기록 삭제");
-        remove.addEventListener("click", () => removeEntry(entry));
+        row.querySelector("use").setAttribute("href", "#icon-minus");
+        row.querySelector(".record-kind").textContent = entry.memo ? entry.category + " · " + entry.memo : entry.category;
+        const date = row.querySelector("time");
+        date.dateTime = entry.date;
+        date.textContent = dayFormat.format(new Date(entry.date + "T12:00:00"));
+        row.querySelector(".record-amount").textContent = "−" + won(entry.amount);
+        row.querySelector(".record-edit").addEventListener("click", () => openEntry(entry));
+        row.querySelector(".record-delete").addEventListener("click", () => {
+          if (!window.confirm(won(entry.amount) + " 지출 기록을 삭제할까요?")) return;
+          persist({ ...state, entries: state.entries.filter(({ id }) => id !== entry.id) });
+          if (editingId === entry.id) closeEntry();
+          renderDashboard("restore");
+        });
         records.append(row);
       }
+      byId("records").hidden = false;
       byId("record-list").replaceChildren(records);
-      byId("record-count").textContent = numberFormat.format(state.entries.length) + "건";
-      byId("record-empty").hidden = state.entries.length > 0;
+      byId("record-count").textContent = entries.length + "건";
+      byId("record-empty").hidden = entries.length > 0;
     }
 
-    function renderStorageStatus() {
-      const message = byId("storage-message");
-      message.hidden = !state.budget && storageAvailable;
-      message.dataset.error = String(!storageAvailable);
-      message.textContent = storageAvailable
-        ? "기록은 이 브라우저에 저장돼요."
-        : "브라우저 저장이 제한되어 있어요. 화면을 닫거나 새로고침하면 기록이 사라질 수 있어요.";
-    }
-
-    function budgetDraft() {
-      const [income, fixed, savings] = budgetInputs.map((field) => parseAmount(field.value));
-      return { income, fixed, savings };
-    }
-
-    function renderSetupEstimate() {
-      const draft = budgetDraft();
-      const ready = Object.values(draft).every((amount) => amount !== null);
-      const base = ready ? budgetBase(draft) : null;
-      byId("base-budget").textContent = base === null ? "—" : won(base);
-      byId("calculation").dataset.level = base !== null && base <= 0 ? "empty" : "safe";
-    }
-
-    function setupError(text = "", field = null) {
-      const error = byId("setup-error");
-      error.textContent = text;
-      error.hidden = !text;
-      budgetInputs.forEach((input) => input.removeAttribute("aria-invalid"));
-      if (field) field.setAttribute("aria-invalid", "true");
-    }
-
-    function showSetup() {
-      const editing = Boolean(state.budget);
-      byId("setup-panel").hidden = false;
-      byId("entry-panel").hidden = true;
-      byId("setup-title").textContent = editing ? "생활비 기준 수정" : "생활비 기준 정하기";
-      byId("save-budget-label").textContent = editing ? "수정한 기준 저장" : "생활비 예산 설정";
-      byId("fill-sample").hidden = editing;
-      byId("cancel-setup").hidden = !editing;
-
-      if (editing) {
-        for (const input of budgetInputs) input.value = formatAmount(state.budget[input.name]);
+    function renderCategories() {
+      const amounts = new Map();
+      for (const { category, amount } of state.entries) amounts.set(category, (amounts.get(category) ?? 0) + amount);
+      const sorted = [...amounts].sort((a, b) => b[1] - a[1]);
+      const { spent } = totals();
+      byId("categories").hidden = false;
+      byId("top-category").textContent = sorted.length
+        ? "가장 많이 쓴 항목은 " + sorted[0][0] + "이에요." : "지출을 기록하면 항목별 금액과 비중을 볼 수 있어요.";
+      const list = document.createDocumentFragment();
+      for (const [name, amount] of sorted) {
+        const row = document.createElement("li");
+        const label = document.createElement("span");
+        label.textContent = name;
+        const value = document.createElement("strong");
+        value.textContent = won(amount) + " · " + percentage(amount / spent);
+        row.append(label, value);
+        list.append(row);
       }
-      setupError();
-      renderSetupEstimate();
+      byId("category-list").replaceChildren(list);
     }
 
-    function showEntry(moveFocus = false) {
-      byId("setup-panel").hidden = true;
-      byId("entry-panel").hidden = false;
-      renderEntry();
-      if (moveFocus) byId("entry-title").focus({ preventScroll: true });
+    function renderDashboard(motion = null) {
+      byId("entry-title").textContent = state.name + "님의 지출";
+      renderOverview(motion);
+      renderRecords();
+      renderCategories();
     }
 
-    function renderEntry(showError = false) {
-      byId("over-budget").hidden = true;
-      byId("over-budget-message").textContent = "";
-      const draftAmount = parseAmount(amountInput.value);
-      const valid = draftAmount !== null && draftAmount > 0;
-      const error = byId("entry-error");
-      const invalid = (showError || amountInput.value.trim() !== "") && !valid;
-      error.hidden = !invalid;
-      error.textContent = invalid ? "1원 이상의 금액을 숫자로 입력해 주세요." : "";
-      if (invalid) amountInput.setAttribute("aria-invalid", "true");
-      else amountInput.removeAttribute("aria-invalid");
+    function closeEntry() {
+      editingId = null;
+      entryForm.hidden = true;
+      byId("new-entry").hidden = false;
+    }
 
-      byId("save-entry").disabled = !valid;
-      byId("save-entry").hidden = false;
+    function openEntry(entry = null) {
+      if (!state.budget) return;
+      showDashboard();
+      editingId = entry?.id ?? null;
+      amountInput.value = entry ? numberFormat.format(entry.amount) : "";
+      byId("memo").value = entry?.memo ?? "";
+      byId("entry-date").value = entry?.date ?? localDate(new Date());
+      byId("category").value = entry?.category ?? categories[0];
+      byId("save-entry").textContent = entry ? "수정 저장" : "저장하기";
+      entryForm.hidden = false;
+      byId("new-entry").hidden = true;
+      showError("entry-error");
+      renderPreview();
+      amountInput.focus();
+    }
+
+    function renderPreview() {
+      const amount = parseAmount(amountInput.value);
       const preview = byId("preview");
-      preview.hidden = !valid;
-      if (!valid) return;
-
-      const before = computeTotals(state.budget, state.entries);
-      const totals = computeTotals(state.budget, state.entries, { type: entryType, amount: draftAmount });
-      preview.dataset.level = totals.level;
-      byId("preview-balance").textContent = won(totals.remaining);
-      const days = daysUntilMonthEnd();
-      const dailyBefore = Math.floor(Math.max(0, before.remaining) / days);
-      const dailyAfter = Math.floor(Math.max(0, totals.remaining) / days);
-      byId("days-left").textContent = "오늘 포함 월말까지 " + days + "일";
-      byId("daily-change").textContent = won(dailyBefore) + " → " + won(dailyAfter);
-
-      const iceLabel = "빙하 " + percentage(totals.ratio);
-      if (totals.remaining < 0) {
-        byId("preview-caption").textContent = won(-totals.remaining) + " 초과 예상 · " + iceLabel;
-      } else if (totals.remaining === 0) {
-        byId("preview-caption").textContent = "생활비 소진 예상 · " + iceLabel;
-      } else {
-        byId("preview-caption").textContent = "빙하 " + percentage(before.ratio) + " → " + percentage(totals.ratio) +
-          (totals.level === "low" ? " · " + stages[totals.stage].name + " 단계" : "");
-      }
-    }
-
-    function setEntryType(type) {
-      if (entryType === type) return;
-      entryType = type;
-      for (const button of typeButtons) button.setAttribute("aria-pressed", String(button.dataset.type === type));
-      byId("amount-label").textContent = typeNames[type] + " 금액";
-      byId("save-entry").textContent = typeNames[type] + " 저장";
-      byId("entry-description").textContent = type === "deposit"
-        ? "처음 잡은 월수입에 포함되지 않은 금액을 입력해 주세요."
-        : "금액을 입력하면 저장 후 잔액을 미리 볼 수 있어요.";
-      renderEntry();
+      preview.hidden = !amount;
+      byId("save-entry").disabled = !amount;
+      if (!amount) return;
+      const { remaining, used, stage } = totals([
+        ...state.entries.filter(({ id }) => id !== editingId), { amount }
+      ]);
+      preview.dataset.level = stage === 5 ? "empty" : stage >= 3 ? "low" : "safe";
+      byId("preview-balance").textContent = won(Math.max(0, remaining));
+      byId("preview-caption").textContent = remaining < 0
+        ? "저장하면 예산을 " + won(-remaining) + " 초과해요."
+        : "저장 후 소비율 " + percentage(used) + " · " + stages[stage].title;
     }
 
     function revealScene() {
@@ -649,173 +569,91 @@
       }
     }
 
-    function announceBalance(prefix) {
-      const totals = computeTotals(state.budget, state.entries);
-      byId("announcement").textContent = prefix + " 남은 생활비 " + won(totals.remaining) + ". " + budgetNotice(totals);
+    for (const category of categories) {
+      const option = document.createElement("option");
+      option.textContent = category;
+      byId("category").append(option);
     }
-
-    for (const input of [...budgetInputs, amountInput]) {
-      input.addEventListener("blur", () => {
-        const value = parseAmount(input.value);
-        if (value !== null) input.value = formatAmount(value);
-      });
-    }
-
-    for (const input of budgetInputs) {
-      input.addEventListener("input", () => {
-        setupError();
-        renderSetupEstimate();
-      });
-    }
+    byId("month").dateTime = monthKey;
+    byId("month-label").textContent = monthFormat.format(today);
+    byId("entry-date").min = monthKey + "-01";
+    byId("entry-date").max = localDate(today);
+    renderStorage();
+    if (state.budget) {
+      showDashboard();
+      renderDashboard();
+    } else showSetup();
 
     byId("fill-sample").addEventListener("click", () => {
-      byId("income").value = "4,500,000";
-      byId("fixed").value = "2,500,000";
-      byId("savings").value = "1,000,000";
-      setupError();
-      renderSetupEstimate();
-      byId("save-budget").focus({ preventScroll: true });
+      if (!byId("profile-name").value.trim()) byId("profile-name").value = "펭귄";
+      byId("income").value = "2,000,000";
     });
-
-    byId("edit-budget").addEventListener("click", () => {
-      showSetup();
-      byId("setup-title").focus({ preventScroll: true });
+    window.addEventListener("focus", () => {
+      if (!localDate(new Date()).startsWith(monthKey + "-")) window.location.reload();
     });
-    byId("cancel-setup").addEventListener("click", () => showEntry(true));
-
+    byId("edit-budget").addEventListener("click", showSetup);
+    byId("cancel-setup").addEventListener("click", showDashboard);
     byId("setup-form").addEventListener("submit", (event) => {
       event.preventDefault();
-      const budget = budgetDraft();
-      const invalid = budgetInputs.find((input) => budget[input.name] === null || (input.name === "income" && budget.income === 0));
-      if (invalid) {
-        const message = invalid.name === "income" ? "월수입을 1원 이상 입력해 주세요." : "고정비와 저축 목표는 0원부터 입력할 수 있어요.";
-        setupError(message, invalid);
-        invalid.focus();
+      const name = byId("profile-name").value.trim();
+      const budget = parseAmount(byId("income").value);
+      if (!name || !budget) {
+        showError("setup-error", "이름과 1원 이상의 예산을 입력해 주세요.");
         return;
       }
-      if (budgetBase(budget) <= 0) {
-        setupError("생활비 예산이 0원보다 커야 해요. 월수입, 고정비, 저축 목표를 조정해 주세요.");
-        return;
-      }
-      persist({ budget, entries: state.entries });
-      renderOverview(true);
-      renderRecords();
-      showEntry(true);
-      revealScene();
-      announceBalance("생활비 기준을 저장했어요.");
+      const previous = state.budget;
+      persist({ ...state, name, budget });
+      showDashboard();
+      renderDashboard(previous ? "restore" : null);
     });
 
-    byId("entry-types").addEventListener("click", (event) => {
-      const button = event.target.closest("button[data-type]");
-      if (button) setEntryType(button.dataset.type);
+    byId("new-entry").addEventListener("click", () => openEntry());
+    byId("cancel-entry").addEventListener("click", () => {
+      closeEntry();
+      byId("new-entry").focus();
     });
-    amountInput.addEventListener("input", () => renderEntry());
-
-    function saveEntry(confirmed = false) {
-      if (!state.budget) return;
-      const amount = parseAmount(amountInput.value);
-      if (amount === null || amount <= 0) {
-        renderEntry(true);
-        amountInput.focus();
-        return;
-      }
-
-      let motion = entryType;
-      if (entryType === "expense") {
-        const { remaining } = computeTotals(state.budget, state.entries);
-        const after = remaining - amount;
-        if (after < 0 && !confirmed) {
-          byId("save-entry").hidden = true;
-          byId("over-budget").hidden = false;
-          byId("over-budget-message").textContent = "생활비 예산을 " + won(-after) + " 초과해요. 이 지출을 저장할까요?";
-          byId("revise-expense").focus();
-          return;
-        }
-        if (remaining > 0 && after <= 0) motion = "collapse";
-      }
-
-      const entry = {
-        id: globalThis.crypto?.randomUUID?.() ?? Date.now() + "-" + Math.random(),
-        type: entryType,
-        amount,
-        time: new Date().toISOString()
-      };
-      persist({ budget: state.budget, entries: [...state.entries, entry] });
-      lastEntry = entry;
-      amountInput.value = "";
-      renderEntry();
-      renderOverview(true, motion);
-      renderRecords();
-      byId("last-action").hidden = false;
-      byId("last-action-text").textContent = typeNames[entry.type] + " " + won(entry.amount) + " 저장 완료";
-      byId("entry-title").focus({ preventScroll: true });
-      revealScene();
-      announceBalance("");
+    amountInput.addEventListener("input", renderPreview);
+    for (const button of entryForm.querySelectorAll("[data-add]")) {
+      button.addEventListener("click", () => {
+        const amount = (parseAmount(amountInput.value) ?? 0) + Number(button.dataset.add);
+        if (amount <= maximumAmount) amountInput.value = numberFormat.format(amount);
+        renderPreview();
+      });
     }
-
-    byId("entry-form").addEventListener("submit", (event) => {
+    entryForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      if (byId("over-budget").hidden) saveEntry();
-    });
-    byId("revise-expense").addEventListener("click", () => {
-      renderEntry();
-      amountInput.focus();
-    });
-    byId("confirm-expense").addEventListener("click", () => {
-      if (!byId("over-budget").hidden && entryType === "expense") saveEntry(true);
-    });
-
-    function removeEntry(removed) {
-      persist({ budget: state.budget, entries: state.entries.filter((entry) => entry.id !== removed.id) });
-      if (lastEntry?.id === removed.id) {
-        lastEntry = null;
-        byId("last-action").hidden = true;
+      const amount = parseAmount(amountInput.value);
+      const date = byId("entry-date").value;
+      if (!localDate(new Date()).startsWith(monthKey + "-")) {
+        window.location.reload();
+        return;
       }
-      renderOverview(true, removed.type === "expense" ? "deposit" : "expense");
-      renderRecords();
-      if (!byId("entry-panel").hidden) renderEntry();
-      byId("balance").focus({ preventScroll: true });
+      const category = byId("category").value;
+      if (!amount || !date.startsWith(monthKey + "-") || date > localDate(new Date()) || !categories.includes(category)) {
+        showError("entry-error", "금액과 이번 달 날짜, 카테고리를 확인해 주세요.");
+        return;
+      }
+      const previous = totals();
+      const entry = {
+        id: editingId ?? globalThis.crypto?.randomUUID?.() ?? Date.now() + "-" + Math.random(),
+        amount, date, category, memo: byId("memo").value.trim()
+      };
+      const entries = editingId ? state.entries.map((item) => item.id === editingId ? entry : item) : [...state.entries, entry];
+      persist({ ...state, entries });
+      const current = totals();
+      const motion = previous.remaining > 0 && current.remaining <= 0 ? "collapse"
+        : current.spent < previous.spent ? "restore" : current.spent > previous.spent ? "expense" : null;
+      closeEntry();
       revealScene();
-      announceBalance("기록을 삭제했어요.");
-    }
-
-    byId("undo-entry").addEventListener("click", () => {
-      if (lastEntry) removeEntry(lastEntry);
+      renderDashboard(motion);
+      byId("announcement").textContent = "지출을 저장했어요. 남은 금액 " + won(current.remaining);
     });
-    byId("show-amounts").addEventListener("click", () => {
+    byId("show-amounts").addEventListener("click", (event) => {
+      event.preventDefault();
       byId("budget-result").close();
       byId("balance").focus({ preventScroll: true });
       revealScene();
     });
-
-    window.addEventListener("storage", (event) => {
-      if (event.key !== storageKey || !storageAvailable) return;
-      const updated = loadState();
-      if (!updated.budget) return;
-      const firstSetup = !state.budget;
-      state = updated;
-      if (lastEntry && !state.entries.some((entry) => entry.id === lastEntry.id)) {
-        lastEntry = null;
-        byId("last-action").hidden = true;
-      }
-      renderOverview(true);
-      renderRecords();
-      if (firstSetup) showEntry();
-      else if (!byId("entry-panel").hidden) renderEntry();
-    });
-
-    // The painted island scales on both axes, so its area follows the remaining budget.
-    const glacier = createGlacier(byId("ice-scene"));
-    byId("month").dateTime = monthKey;
-    byId("month-label").textContent = monthFormat.format(currentDate);
-    renderStorageStatus();
-    if (state.budget) {
-      showEntry();
-      renderOverview();
-      renderRecords();
-    } else {
-      showSetup();
-    }
 
     function createGlacier(canvas) {
       const context = canvas.getContext("2d");
@@ -984,31 +822,21 @@
         context.restore();
       }
 
-      function paintOrca(x, y, scale, tilt) {
+      function paintSeaLion(x, y, scale, gape) {
         context.save();
         context.translate(x, y);
-        context.rotate(tilt);
         context.scale(scale, scale);
-        const skin = linear(0, -48, 0, 26, [[0, "#344462"], [.55, "#111c37"], [1, "#070f25"]]);
-        shape("M-54 12 C-81 9 -83 -9 -66 -22 C-52 -34 -32 -34 -11 -30 C-5 -41 -3 -58 -6 -72 C10 -69 22 -47 24 -24 C43 -17 61 -9 75 -7 C86 -20 101 -21 113 -16 C103 -11 101 -4 102 1 C110 4 117 12 118 19 C105 17 92 13 78 4 C64 7 42 20 16 23 C-13 28 -37 23 -54 12 Z", skin, "#6685ad", 1.2);
-        shape("M-76 -1 C-62 6 -46 7 -31 7 C-15 9 -14 15 10 17 C-11 25 -38 23 -58 14 C-68 10 -75 6 -76 -1 Z", "#e7f6ff");
-        ellipse(-43, -17, 14, 6, "#f2fcff", -.29);
-        ellipse(-60, -12, 2.3, 2.5, "#050d21");
-        shape("M-13 7 C-1 7 17 13 29 31 C13 34 -2 28 -13 16 Z", "#111e3c", "#536d95");
-        context.restore();
-      }
-
-      function paintSeal(x, y, scale, facing = 1) {
-        context.save();
-        context.translate(x, y);
-        context.scale(scale * facing, scale);
-        const fur = linear(0, -35, 0, 11, [[0, "#aebdd3"], [1, "#647c9a"]]);
-        ellipse(-8, 3, 32, 8, "#0c214bb0");
-        shape("M-36 3 C-32 -12 -13 -13 -8 -22 C-5 -39 19 -42 27 -28 C32 -21 28 -18 37 -15 C45 -8 38 2 23 3 Z", fur, "#c0d3e4");
-        ellipse(25, -13, 11, 7, "#d0deed");
-        ellipse(19, -23, 2.6, 3, "#17233e");
-        ellipse(35, -14, 3.2, 2.8, "#17233e");
-        shape("M30 -11 L45 -10 M29 -8 L42 -5 M27 -5 L38 -1", "transparent", "#edf6ff", 1);
+        const fur = linear(0, -80, 0, 30, [[0, "#eeb98a"], [.6, "#ad745f"], [1, "#695066"]]);
+        ellipse(20, 10, 90, 16, "#13294f88");
+        shape("M-62 4 C-50 -6 -27 -8 -19 -29 C-21 -44 -16 -68 7 -75 C27 -82 46 -70 48 -54 C75 -54 87 -38 74 -25 C65 -15 52 -17 44 -15 C51 -2 65 0 88 -1 Q112 -15 121 -3 Q118 13 96 18 C48 36 -36 34 -62 4 Z", fur, "#efc2a0", 1.4);
+        shape("M-7 -68 Q-17 -83 -6 -84 Q5 -80 8 -73 Z", "#bc836a", "#f4c6a4");
+        shape("M6 3 Q-26 30 -2 29 Q19 25 29 12 Z", "#8f6060", "#d3917c");
+        ellipse(52, -34, 26, 14, "#eac098");
+        ellipse(28, -55, 4.1, 4.6, "#352637");
+        ellipse(70, -42, 7, 4.8, "#3a2b39");
+        ellipse(48, -22, 12 + 22 * gape, 2 + 22 * gape, "#402d42");
+        if (gape > .1) ellipse(48, -19 + 9 * gape, 10 + 9 * gape, 4 * gape, "#e89c9d");
+        shape("M55 -37 L82 -31 M54 -33 L81 -25 M54 -29 L75 -20", "transparent", "#fff0d4", 1);
         context.restore();
       }
 
@@ -1044,8 +872,8 @@
         shape("M-26 -92 C-24 -112 -6 -113 1 -101 C11 -114 28 -111 30 -93 C31 -80 17 -73 2 -73 C-13 -73 -28 -80 -26 -92 Z", "#f1f3fd");
         ellipse(-17, -87, 5, 2.6, "#edabb38f");
         ellipse(21, -87, 5, 2.6, "#edabb38f");
-        ellipse(-10, -93, 3.3, 4, "#192543");
-        ellipse(13, -93, 3.3, 4, "#192543");
+        ellipse(-10, -93, 3.3, stage >= 2 ? 6 : 4, "#192543");
+        ellipse(13, -93, 3.3, stage >= 2 ? 6 : 4, "#192543");
         ellipse(-9.2, -94.6, 1, 1, "#fdfdff");
         ellipse(13.8, -94.6, 1, 1, "#fdfdff");
         shape("M-5 -89 Q2 -94 9 -89 Q5 -82 2 -82 Q-1 -82 -5 -89 Z", "#ffcd87", "#dda768", .8);
@@ -1081,34 +909,31 @@
         const scale = Math.min(width / 492, height / 268, 1.29);
         const iceScale = Math.sqrt(ratio);
         const collapse = direction === "collapse";
-        const swim = collapse ? Math.max(0, (progress - .34) / .66) : 0;
-        const fall = collapse ? Math.min(1, Math.max(0, (progress - .18) / .20)) : 0;
-        const glow = direction === "deposit" ? Math.sin(progress * Math.PI) : 0;
+        const fall = collapse ? Math.min(1, Math.max(0, (progress - .18) / .23)) : 0;
+        const lunge = collapse ? Math.min(1, Math.max(0, (progress - .25) / .43)) : 0;
+        const gulp = collapse ? Math.min(1, Math.max(0, (progress - .58) / .13)) : 0;
+        const gape = collapse ? Math.sin(lunge * Math.PI * .5) * (1 - gulp) : 0;
+        const glow = direction === "restore" ? Math.sin(progress * Math.PI) : 0;
         context.clearRect(0, 0, width, height);
         paintSky(horizon);
         paintMountains(horizon);
         paintWater(horizon, iceY);
         paintIce(iceX, iceY, scale * iceScale, glow, stage >= 3);
         paintParticles(iceX, iceY, scale, collapse ? Math.min(1, progress / .49) : progress, collapse ? "expense" : direction);
-        const bob = direction ? Math.sin(progress * Math.PI) * (direction === "deposit" ? -9 : 5) : 0;
-        const penguinX = iceX + width * .88 * swim;
-        const penguinY = iceY + (fall * 51 - 21 * iceScale - 4 - bob) * scale;
-        const lean = collapse ? .46 * fall : Math.sin(progress * Math.PI) * (direction === "expense" ? .085 : -.045);
-        if ((stage >= 3 && stage < 5) || collapse) {
+        const bob = direction ? Math.sin(progress * Math.PI) * (direction === "restore" ? -9 : 5) : 0;
+        const penguinX = iceX + 5 * scale;
+        const penguinY = iceY + (fall * 42 + gulp * 22 + (stage === 4 ? 9 : 0) - 21 * iceScale - 4 - bob) * scale;
+        const lean = collapse ? .46 * fall : (stage >= 2 ? .13 : 0) + Math.sin(progress * Math.PI) * .08;
+        const showPenguin = stage < 5 || (collapse && gulp < 1);
+        if (showPenguin) paintPenguin(penguinX - gulp * 18 * scale, penguinY, scale * (1 - .64 * gulp), lean);
+        if ((stage >= 3 && stage <= 4) || collapse) {
           const entering = transition?.fromStage < 3 && !collapse ? (1 - progress) ** 2 : 0;
-          paintSeal(width * (.16 - .27 * entering + 1.04 * swim), iceY + 30 * scale, scale * .96);
+          const lionX = collapse ? iceX - (174 - lunge * 127) * scale : width * ((stage === 4 ? .26 : .15) - .28 * entering);
+          const lionY = iceY + (collapse ? 35 - lunge * 30 : stage === 4 ? 21 : 47) * scale;
+          paintSeaLion(lionX, lionY, scale * (collapse ? 1.15 : stage === 4 ? .96 : .82), gape);
         }
         if (collapse) {
-          const approach = Math.min(1, swim * 3);
-          const orcaX = width * (.82 - .40 * approach + .81 * Math.max(0, (swim - .28) / .72));
-          paintOrca(orcaX, iceY + 48 * scale, scale * (swim > .28 ? -.80 : .80), 0);
-        } else if (stage === 4) {
-          const entering = transition?.fromStage < 4 ? (1 - progress) ** 2 : 0;
-          paintOrca(width * (.84 + .34 * entering), iceY + 50 * scale, scale * .68, 0);
-        }
-        if (stage < 5 || collapse) paintPenguin(penguinX, penguinY, scale * 1.02, lean);
-        if (collapse) {
-          const splash = Math.max(0, 1 - Math.abs(progress - .36) / .13);
+          const splash = Math.max(0, 1 - Math.abs(progress - .39) / .15);
           paintSplash(penguinX, iceY + 17 * scale, scale, splash);
         }
       }

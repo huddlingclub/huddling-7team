@@ -9,7 +9,7 @@ export default function Home() {
         className="mt-6 inline-flex rounded-lg bg-indigo-700 px-4 py-3 font-semibold text-white hover:bg-indigo-800"
         href={import.meta.env.BASE_URL + 'penguin-glacier.html'}
       >
-        펭귄 빙하 가계부 열기
+        얼음섬 가계부 열기
       </a>
       <p className="mt-2 text-sm text-gray-400">
         API Base URL:{' '}

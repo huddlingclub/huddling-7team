@@ -55,3 +55,29 @@ npm run dev            # http://localhost:5173
 3. `main` 에 병합되면 Production, 다른 브랜치나 PR 은 Preview 로 자동 배포됩니다.
 4. `vercel.json` 의 rewrites 설정 덕분에 새로고침해도 SPA 라우팅이 404 없이 동작합니다.
 5. 비밀 키가 필요한 API 는 `api/` 폴더에 Vercel Serverless Function 을 만들어 서버에서 호출하세요 (`VITE_` 없는 변수는 서버에서만 읽힙니다).
+
+## 텅빙주의보 🐧 (월급이 녹는 펭귄 가계부)
+
+Figma "7조 ver3" 시안을 그대로 구현한 MVP. DB 없이 `localStorage`만 사용합니다.
+
+### 화면 흐름
+
+01 시작 → 02 한도 입력 → 03 홈 (빙하 6단계 + 바다표범 등장·접근·꿀꺽) → 지출 입력 시트 / 한도와 기간 시트 / 한도 수정 / 지출 내역
+
+### 코드 구조
+
+| 경로                                                             | 역할                                                                                        |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/lib/constants.ts`                                           | 단계 구간(30/50/70/90/100), 단계 색·말풍선, 카테고리 칩 색, 빠른 금액, 바다표범 연출 on/off |
+| `src/lib/calc.ts`                                                | 소비율, 남은 금액, 하루에 쓸 수 있는 돈, 날짜 포맷                                          |
+| `src/lib/store.ts`                                               | localStorage 저장소 (`useStore`, `actions`)                                                 |
+| `src/components/Scene.tsx`                                       | 홈 장면. 시안 390×563 좌표를 그대로 쓰고 폭에 맞춰 scale                                    |
+| `src/components/ui.tsx`                                          | 버튼·Pill·카테고리 칩·지출 행·바텀시트                                                      |
+| `src/components/ExpenseSheet.tsx`, `GoalSheet.tsx`, `Keypad.tsx` | 지출 입력 / 한도와 기간 / 숫자 키패드                                                       |
+| `src/screens/`                                                   | Splash, LimitSetup(입력·수정 겸용), Home, History                                           |
+| `public/img/`                                                    | Figma에서 받은 이미지 (바다, 빙하, 펭귄 4종, 바다표범, 금·물결 SVG, 아이콘)                 |
+| `docs/`                                                          | PRD, 기획 확정안                                                                            |
+
+### 범위 밖
+
+2인 공유 모드(실시간 동기화)는 백엔드가 필요해 MVP에서 제외.

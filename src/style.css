@@ -1,17 +1,112 @@
 @import 'tailwindcss';
 
-/* 디자인 토큰 — 프로젝트 공통 색상/폰트는 여기서 관리 */
+/* 디자인 토큰 — Figma "7조 ver2" 시안 값 그대로 */
 @theme {
-  --color-brand: #111827;
-  --color-brand-accent: #6366f1;
-  --font-sans: 'Pretendard', system-ui, -apple-system, sans-serif;
+  --color-grey900: #191f28;
+  --color-grey800: #333d4b;
+  --color-grey700: #4e5968;
+  --color-grey600: #6b7684;
+  --color-grey500: #8b95a1;
+  --color-grey400: #b0b8c1;
+  --color-grey300: #d1d6db;
+  --color-grey200: #e5e8eb;
+  --color-grey100: #f2f4f6;
+  --color-grey50: #f9fafb;
+  --color-blue500: #3182f6;
+  --color-blue600: #1b64da;
+  --color-blue50: #e8f3ff;
+  --color-scene: #dcedf8;
+  --color-splash: #7cc6f5;
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  @apply text-grey900 bg-white;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
 @layer base {
-  html {
-    @apply antialiased;
+  button {
+    cursor: pointer;
   }
-  body {
-    @apply bg-white text-gray-900;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(100%);
   }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px) rotate(-1deg);
+  }
+  40% {
+    transform: translateX(5px) rotate(1deg);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.sheet-enter {
+  animation: rise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dim-enter {
+  animation: fadein 0.2s ease-out;
+}
+.shake {
+  animation: shake 0.5s;
+}
+.bob {
+  animation: bob 2.6s ease-in-out infinite;
+}
+.drift {
+  animation: drift 4s ease-in-out infinite;
 }

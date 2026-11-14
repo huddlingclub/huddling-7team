@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+/* 디자인 토큰 — 프로젝트 공통 색상/폰트는 여기서 관리 */
+@theme {
+  --color-brand: #111827;
+  --color-brand-accent: #6366f1;
+  --font-sans: 'Pretendard', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  body {
+    @apply bg-white text-gray-900;
+  }
+}
